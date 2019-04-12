@@ -87,7 +87,6 @@ export const asyncRouterMap = [
       {
         path: 'inquiryReceipt',
         name: 'inquiryReceipt',
-        hidden: true,
         component: () => import('@/views/manager/inquiry/inquiryReceipt'),
         meta: { title: '新增需求回单', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
       }
@@ -400,7 +399,7 @@ export const asyncRouterMap = [
       }
     ]
   },
-  
+
   {
     path: '',
     component: Layout,
