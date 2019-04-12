@@ -1,113 +1,119 @@
 import request from '@/utils/request';
 import global_ from '@/global/global';
-import { parseTime, cloneObj, byTypeGetObj , formatTime } from '@/utils';
+import { parseTime, cloneObj, byTypeGetObj, formatTime } from '@/utils';
 
 const inquiryStatus = global_.inquiryStatus;
 
-export function getList(params) {         
-    return request({
-      url: '/auth.do?cmd=queryInquiryList',
-      method: 'get',
-      params
-    }).then(res => {
+export function getList(params) {
+  return request({
+    url: '/auth.do?cmd=queryInquiryList',
+    method: 'get',
+    params
+  }).then(res => {
+    let list = res.list;
 
-      let list = res.list
+    let formatList = list.map((item) => {
+      return {
 
-      let formatList = list.map((item)=>{
+        inquiryId: item.inquiryId,
+        image: item.imageList[0],
+        createTime: parseTime(item.createTime, '{m}-{d} {h}:{i}'),
+        saysPassed: formatTime(item.createTime / 1000),
+        expireTime: parseTime(item.expireTime, '{m}-{d} {h}:{i}'),
+        name: item.name,
+        companyName: item.companyName,
+        phone: item.phone,
+        status: byTypeGetObj(item.status, inquiryStatus).n,
+        responseCount: item.responseCount == 0 ? '—' : item.responseCount,
+        confirmedCount: item.confirmedCount,
+        deputeCollect: item.deputeCollect == 0 ? '否' : '是'
+      };
+    });
 
-        return {
+    res.formatList = formatList;
 
-          inquiryId       : item.inquiryId,
-          image           : item.imageList[0],
-          createTime      : parseTime(item.createTime,'{m}-{d} {h}:{i}'),
-          saysPassed      : formatTime(item.createTime / 1000),
-          expireTime      : parseTime(item.expireTime,'{m}-{d} {h}:{i}'),
-          name            : item.name,
-          companyName     : item.companyName,
-          phone           : item.phone,
-          status          : byTypeGetObj(item.status,inquiryStatus).n,
-          responseCount   : item.responseCount == 0 ? '—' : item.responseCount,
-          confirmedCount  : item.confirmedCount,
-          deputeCollect   : item.deputeCollect == 0 ? '否' : '是',
-        }
-      })
-
-      res.formatList = formatList
-      
-      return res
-    })
+    return res;
+  });
 }
 
-export function inquiryDetail(params) {         
+export function inquiryDetail(params) {
   return request({
     url: '/auth.do?cmd=queryInquiryDetail',
     method: 'get',
     params
-  })
+  });
 }
 
-export function updateInquiry(params) {         
+export function updateInquiry(params) {
   return request({
     url: '/auth.do?cmd=updateInquiry',
     method: 'post',
     data: params
-  })
+  });
 }
 
-export function providerListByKeys(params) {         
+export function providerListByKeys(params) {
   return request({
     url: '/auth.do?cmd=providerListByKeys',
     method: 'get',
     params
-  })
+  });
 }
 
-export function sendInquiry(params) {         
+export function sendInquiry(params) {
   return request({
     url: '/auth.do?cmd=sendInquiry2Users',
     method: 'post',
     data: params
-  })
+  });
 }
 
-export function getInquiryReceiptList(params) {         
+export function getInquiryReceiptList(params) {
   return request({
     url: '/auth.do?cmd=getInquiryReceiptList',
     method: 'get',
     params
-  })
+  });
 }
 
-export function updateInquiryDeliveryInfo(params) {         
+export function updateInquiryDeliveryInfo(params) {
   return request({
     url: '/auth.do?cmd=updateInquiryDeliveryInfo',
     method: 'post',
     data: params
-  })
+  });
 }
 
-export function updateInquiryStatus(params) {         
+export function updateInquiryStatus(params) {
   return request({
     url: '/auth.do?cmd=updateInquiryStatus',
     method: 'post',
     data: params
-  })
+  });
 }
 
-export function querySendInquiryList(params) {         
+export function querySendInquiryList(params) {
   return request({
     url: '/auth.do?cmd=querySendInquiryList',
     method: 'get',
     params
-  })
+  });
 }
 
-export function getInquiryReceiptStatus(params) {         
+export function getInquiryReceiptStatus(params) {
   return request({
     url: '/auth.do?cmd=getInquiryReceiptStatus',
     method: 'get',
     params
-  })
+  });
 }
 
+export function insertInquiryReceipt(params) {
+  return request({
+    url: '/auth.do?cmd=insertInquiryReceipt',
+    method: 'post',
+    // receipt: params
+    data: params
+  });
+}
 
