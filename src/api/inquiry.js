@@ -108,6 +108,14 @@ export function getInquiryReceiptStatus(params) {
   });
 }
 
+export function providerListFilter(params) {
+  return request({
+    url: '/auth.do?cmd=providerListFilter',
+    method: 'get',
+    params
+  });
+}
+
 export function insertInquiryReceipt(params) {
   return request({
     url: '/auth.do?cmd=insertInquiryReceipt',
