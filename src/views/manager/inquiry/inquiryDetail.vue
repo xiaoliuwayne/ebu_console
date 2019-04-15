@@ -1,15 +1,10 @@
 <template>
     <div class="inquiry-detail">
         <div class="submit-btn">
-             <!-- <el-alert
-                title="备注：XXXXX、XXXX、XXXXXXXXX、XXXX、XXXXXXXXX、XXXX、XXXXXXXXX、XXXX、XXXX"
-                type="info"
-                :closable="false"
-                center>
-            </el-alert> -->
-            <div v-if="status.t == '1'">
-                <el-button type="primary" @click="getSendInquiry">发布需求</el-button>
-                <el-button type="danger" @click="getCloseInquiry">关闭订单</el-button>
+
+            <div>
+                <el-button v-if="status.t == '1'" type="primary" @click="getSendInquiry">发布需求</el-button>
+                <el-button v-if="status.t != '4'" type="danger" @click="getCloseInquiry">关闭订单</el-button>
             </div>
             
         </div>
@@ -84,10 +79,10 @@
                     <td>是否接受定制</td>
                     <td>
                         <el-select size="mini" v-if="acceptCustomizeIsChange" v-model="acceptCustomize" placeholder="请选择">
-                            <el-option label="否" :value="0"></el-option>
-                            <el-option label="是" :value="1"></el-option>
+                            <el-option label="现货" :value="0"></el-option>
+                            <el-option label="定制" :value="1"></el-option>
                         </el-select>
-                        <span v-else>{{acceptCustomize ? '是' : '否'}}</span>
+                        <span v-else>{{!acceptCustomize ? '现货' : '定制'}}</span>
 
                         <el-button v-if="status.t == '1'" type="text" size="mini" @click="handleConfirm('acceptCustomize')">{{acceptCustomizeIsChange ? '确认' : '修改'}}</el-button>
                         
@@ -158,156 +153,124 @@
             <table class="table table-responsive table-bordered">
                 <tbody>
                     <tr>
-                        <td>备注说明</td>
+                        <td>客服备注</td>
                         <td>
-                            <el-input
-                            type="textarea"
-                            :rows="3"
-                            placeholder="请输入内容"
-                            v-model="detail.note"
-                            v-if="noteIsChange">
-                            </el-input>
-                            <p v-else>{{detail.note}}</p>
-                            <el-button type="text" size="mini" @click="handleConfirm('note')">{{noteIsChange ? '确认' : '修改'}}</el-button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </el-card>
-
-        <el-card class="inquiry-info">
-            <div slot="header" class="clearfix">
-                <span>待发供应商数量：<strong>{{usersArr.length}}</strong></span>
-            </div>
-            <table class="table table-responsive table-bordered">
-                <tbody>
-           
-                        <!-- <tr v-for="(item,index) of providerList" :key="item.userId" v-if="index ==">
-                            <td>1</td>
-                            <td>2</td>
-                            <td>3</td>
-                            <td>4</td>
-                        </tr> -->
-        
-                    
-                    <tr>
-                        <td>5</td>
-                        <td>6</td>
-                        <td>7</td>
-                        <td>8</td>
-                    </tr>
-                </tbody>
-            </table>
-        </el-card>
-
-        <el-card class="inquiry-info">
-            <table class="table table-responsive table-bordered">
-                <tbody>
-
-                    <tr v-if="status.t != '2'">
-                        <td>
-                            <h2>{{usersArr.length}}</h2>
-                            <span>供应商数量</span>
-                        </td>
-                        <td>
-                            <div>
-                                <ul>
-                                    <li v-for="(item,classifyIndex) in classifyList" :key="classifyIndex">
-                                        <h3>{{item.label}}：{{item.providerList.length}}家</h3>
-                                        <el-tooltip v-for="(val,providerIndex) in item.providerList" :key="providerIndex" placement="top" effect="light">
-                                            <div slot="content">
-                                                <div class="tips" >
-                                                    <h4>主营业务</h4>
-                                                    <div>
-                                                        <p>
-                                                            <label>针织：</label>
-                                                            <span v-for="(value,index) in val.busiKeywords" :key="index">
-                                                                <template v-if="value.groupId == 1">{{value.keyword}}、</template>
-                                                            </span>
-                                                        </p>
-                                                    </div>
-                                                    <div>
-                                                        <p>
-                                                            <label>梭织：</label>
-                                                            <span v-for="(value,index) in val.busiKeywords" :key="index">
-                                                                <template v-if="value.groupId == 2">{{value.keyword}}、</template>
-                                                            </span>
-                                                        </p>
-                                                    </div>
-                                                    <div>
-                                                        <label>备注：</label>
-                                                        <span>{{val.memo}}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <el-tag
-                                            style="margin:0 10px 10px 0;"
-                                            :closable="status.t == '1'"
-                                            :disable-transitions="false"
-                                            @close="handleDeleteProvider(classifyIndex,providerIndex)">
-                                            {{val.name}}
-                                            </el-tag>
-                                        </el-tooltip>
+                            <div style=" min-width:40%;">
+                                <div style="display:flex;">
+                                    <el-input
+                                    placeholder="请输入内容"
+                                    v-model.trim="noteContent"
+                                    size="mini"
+                                    v-if="noteIsChange">
+                                    </el-input>
+                                    
+                                </div>
+                                <ul style="margin:10px 0;">
+                                    <li v-for="(item,index) in detail.note" :key="index">
+                                        {{parseTimeClone(item.createTime)}} / 内容：{{item.content}}
                                     </li>
-                                </ul>                           
+                                </ul>
                             </div>
+                            <el-button type="text" size="mini" @click="handleConfirm('note')">{{noteIsChange ? '确认' : '添加备注'}}</el-button>
                         </td>
                     </tr>
-                    <tr v-if="status.t != '1'">
+                </tbody>
+            </table>
+        </el-card>
+
+        <el-card class="inquiry-info" v-if="providerList.length != 0">
+            <div slot="header" class="clearfix">
+                <span>待发供应商数量：<strong>{{providerList.length}}</strong></span>
+            </div>
+
+            <ul class="provider-list">
+                <li v-for="(item,index) of providerList" :key="item.userId">
+                    <div>
+                        <el-tag :closable="status.t == '1'" @close="handleDeleteProvider(index)">{{item.name}}</el-tag>
+                    </div>
+                    <div>
+                        <div>
+                            <label>针织：</label>
+                            <p>
+                                <span v-for="val of item.busiKeywords" :key="val.keyId">
+                                    <template v-if="val.groupId == 1">
+                                        {{val.keyword}}、
+                                    </template>
+                                </span>
+                            </p>
+                        </div> 
+                        <div>
+                            <label>棱织：</label>
+                            <p>
+                                <span v-for="val of item.busiKeywords" :key="val.keyId">
+                                    <template v-if="val.groupId == 2">
+                                        {{val.keyword}}、
+                                    </template>
+                                </span>
+                            </p>
+                        </div> 
+                        <div><label>备注：</label><p>{{item.memo}}</p></div>
+                    </div>
+                </li>
+            </ul>
+        </el-card>
+
+        <el-card class="inquiry-info" v-if="status.t != '1'">
+            <table class="table table-responsive table-bordered">
+                <tbody>
+
+                    <tr>
                         <td>
                             <h2>{{sendSmsList.length}}</h2>
                             <span>已发送短信数量</span>
                         </td>
                         <td>
-                            
-                            <div>
-
-                                <!-- <el-tag
-                                    v-for="(item,index) in sendSmsList" :key="index"
-                                    style="margin:0 10px 10px 0;"
-                                    :type="item.status == 1 ? 'success' : 'danger'"
-                                    plain
-                                    :title="item.smsCode">
-                                    {{item.provider}}
-                                </el-tag> -->
-
-                                <VNodes :vnodes="renderTagSendSms(sendSmsList)" />
-                                               
-                            </div>
-
-                            <el-popover
-                                placement="top"
-                                title="再次发送短信给供应商"
-                                width="400"
-                                trigger="click"
-                                v-model="sendSmsAgainShow">
+                            <div class="send-sms">
                                 <div>
-                                    <div style="display:flex; margin-bottom:20px;">
-                                        <el-input placeholder="请填写供应商ID" v-model="searchProviderId">
-                                            <el-button slot="append" icon="el-icon-search" @click="getSearchProviderId" :disabled="!(searchProviderId.length == 5)"></el-button>
-                                        </el-input>
-                                    </div> 
+                                    <span>正在发送</span>
+                                    <span>已发未用</span>
+                                    <span>已发已用</span>
+                                    <span>发送失败</span>
+                                </div>
+                                <div style="display:flex">
                                     <div>
-                                        <el-tag
-                                            v-for="(item,index) in sendSmsAgainList" :key="index"
-                                            style="margin:0 10px 10px 0;"
-                                            type="info"
-                                            closable
-                                            @close="handleDeleteSendAgainSms(index)"
-                                            plain>
-                                            {{item.name}}
-                                        </el-tag>
+                                        <VNodes :vnodes="renderTagSendSms(sendSmsList)" />
                                     </div>
-                                </div>
-                                <el-button type="text" size="mini" slot="reference">添加短信</el-button>
+                                    <el-popover
+                                        placement="top"
+                                        title="再次发送短信给供应商"
+                                        width="400"
+                                        trigger="click"
+                                        v-model="sendSmsAgainShow">
+                                        <div>
+                                            <div style="display:flex; margin-bottom:20px;">
+                                                <el-input placeholder="请填写供应商ID" v-model="searchProviderId">
+                                                    <el-button slot="append" icon="el-icon-search" @click="getSearchProviderId" :disabled="!(searchProviderId.length == 5)"></el-button>
+                                                </el-input>
+                                            </div> 
+                                            <div>
+                                                <el-tag
+                                                    v-for="(item,index) in sendSmsAgainList" :key="index"
+                                                    style="margin:0 10px 10px 0;"
+                                                    type="info"
+                                                    closable
+                                                    @close="handleDeleteSendAgainSms(index)"
+                                                    plain>
+                                                    {{item.name}}
+                                                </el-tag>
+                                            </div>
+                                        </div>
 
-                                <div style="padding:10px 0; text-align:center">
-                                    <el-button type="primary" size="small" @click="getSendSmsAgain" :disabled="this.sendSmsAgainList.length == 0">确认发送</el-button>
-                                    <el-button size="small" @click="sendSmsAgainShow = false">取消发送</el-button>
-                                </div>
-                                
-                            </el-popover>
+                                        <el-button v-show="status.t == '2'" type="text" size="mini" slot="reference">添加供应商</el-button>
 
+                                        <div style="padding:10px 0; text-align:center">
+                                            <el-button type="primary" size="small" @click="getSendSmsAgain" :disabled="this.sendSmsAgainList.length == 0">确认发送</el-button>
+                                            <el-button size="small" @click="sendSmsAgainShow = false">取消发送</el-button>
+                                        </div>
+                                        
+                                    </el-popover>
+                                </div>
+                            </div>
                             <!-- <div style="text-align:center; width:100%;" v-else>
                                 暂时还没有发送短信
                             </div> -->
@@ -534,10 +497,11 @@ export default {
             descIsChange:false,
             noteIsChange:false,
             
-
+            noteContent:'',
             detail:{
-                note:''
+                note:null
             },
+
             priceTypes: [
                 {
                     label: '色卡',
@@ -610,13 +574,21 @@ export default {
             
             let providerList = []
 
-            for(let item of this.classifyList){
+            /* for(let item of this.classifyList){
                 
                 for(let val of item.providerList){
                     providerList.push(val.userId)
                 }
 
-            }   //提取供应商的值
+            } */   //提取供应商的值
+
+            for(let item of this.providerList){
+                
+                for(let val of item.busiKeywords){
+                    providerList.push(val.userId)
+                }
+
+            }
 
             providerList = Array.from(new Set(providerList))    //数组去重
 
@@ -624,6 +596,7 @@ export default {
         }
     },
     created(){
+        
 
         /* this.GLOBAL.priceTypes.forEach(v => {
             this.priceTypes.push({
@@ -637,6 +610,10 @@ export default {
         
     },
     methods: {
+
+        parseTimeClone(time){
+            return parseTime(time)
+        },
 
         //使用jsx实现template实现不了的逻辑代码
         renderTagSendSms(arr){
@@ -660,9 +637,8 @@ export default {
                     return <el-tag 
                         type  = {type}
                         key   = {item.userId}
-                        title = {item.smsCode}
                         style = {{ margin: '0 10px 10px 0'}}>
-                        {item.provider}
+                        {item.provider}{item.smsCode}
                     </el-tag>
                 })
             )
@@ -721,8 +697,9 @@ export default {
 
         },
 
-        handleDeleteProvider(classifyIndex,providerIndex){
-            this.classifyList[classifyIndex].providerList.splice(providerIndex, 1)
+        handleDeleteProvider(index){
+            /* this.classifyList[classifyIndex].providerList.splice(providerIndex, 1) */
+            this.providerList.splice(index, 1)
         },
 
         getUpdateInquiryDeliveryInfo(formName){
@@ -861,7 +838,7 @@ export default {
 
             //初始化需求单基本数据
             await inquiryDetail({ inquiryId: this.inquiryId }).then(res => {
- 
+                
                 this.inquiryId       = res.inquiryId
                 this.createTime      = parseTime(res.createTime,"{y}-{m}-{d} {h}:{i}")
                 this.expireTime      = parseTime(res.expireTime,"{y}-{m}-{d} {h}:{i}")
@@ -981,6 +958,7 @@ export default {
             let keyIds = [...this.matching[0],...this.matching[1]]
 
             if(keyIds.length == 0){
+                this.providerList = []
                 return false
             }
 
@@ -992,9 +970,9 @@ export default {
             }
 
             return providerListByKeys(params).then(res => {
-                    console.log(res)
+    
 
-                    for(let keyId of keyIds){//循环有多少种面料种类
+                    /* for(let keyId of keyIds){
                         
                         let addData = {
                             label        :  this.busiScope[2][keyId],
@@ -1002,9 +980,9 @@ export default {
                             providerList :  []
                         }
 
-                        for(let item of res.list){//list列表表示有多少家供应商有上述的面料种类
+                        for(let item of res.list){
 
-                            for(let single of item.busiKeywords){//将面料种类与供应商一一对应
+                            for(let single of item.busiKeywords){
                                 if(keyId == single.keyId){
                                     
                                     addData['providerList'].push({
@@ -1019,10 +997,10 @@ export default {
 
                         classifyList.push(addData)
                         
-                    }
+                    } */
                     
                     this.providerList = res.list
-                    this.classifyList = classifyList
+                    /* this.classifyList = classifyList */
 
                     return true
                 })
@@ -1049,9 +1027,19 @@ export default {
                 }
 
             }else if(noun == 'note'){
+
+                if(this.noteContent == '') return false
+
+                this.detail.note.push ({
+                    
+                    createTime  : new Date(),
+                    content     : this.noteContent
+                            
+                })
+
                 params = {
                     detail: {
-                        [noun] : this.detail[noun]
+                        [noun] : this.detail.note
                     }
                 }
             }else{
@@ -1235,6 +1223,64 @@ export default {
         color:rgb(52,208,122);
     }
 
+}
+
+.provider-list{
+    border:1px solid #ebeef5;
+    display:flex;
+    flex-flow:row wrap;
+    li{
+        display:flex;
+        width:50%;
+        border-right:1px solid #ebeef5;
+        border-bottom:1px solid #ebeef5;
+        & > div:nth-child(1){
+            text-align:center;
+            padding:8px;
+            min-width:30%;
+            height:100%;
+            border-right:1px solid #ebeef5;
+        }
+        & > div:nth-child(2){
+            padding:8px;
+            & > div{
+                display:flex;
+                margin-bottom:10px;
+                label{
+                    min-width:50px;
+                }
+                span{
+                    white-space: nowrap;
+                    display: inline-block;
+                }
+            }
+        }
+    }
+}
+
+.send-sms{
+    & > div{
+        &:nth-child(1){
+            margin-bottom:20px;
+            font-size:12px;
+            span{
+                position: relative;
+                padding-left:20px;
+                &:before{
+                    content:'';
+                    position: absolute;
+                    width:10px;
+                    height:10px;
+                    left:4px;
+                    top:2px;
+                }
+            }
+            @each $i, $color in (1: #e6a23c, 2: #409EFF, 3:#67C23A, 4 :#F56C6C) {
+                span:nth-child(#{$i}):before{background-color:$color;}
+            }
+
+        }
+    }
 }
 
 </style>
