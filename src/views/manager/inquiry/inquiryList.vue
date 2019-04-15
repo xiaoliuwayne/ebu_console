@@ -4,6 +4,7 @@
     <el-tabs v-model="status" @tab-click="handleClick">
       <el-tab-pane :label="item.n" :name="item.t" :type="item.t" v-for="item in tagsGroup" :key="item.t"></el-tab-pane>
     </el-tabs>
+
     <div class="search-block">
       <search-input :inputList="inputGroup" @keyup.enter.native="handleSearch" ref="queryData"></search-input>
     </div>
@@ -47,7 +48,7 @@ export default {
       totalSize: 0,
       tagsGroup: this.GLOBAL.inquiryStatus,
       orderId: this.$route.query.orderId || 0,
-      status: this.GLOBAL.inquiryStatus[0].t,
+      status: this.$route.query.status || this.GLOBAL.inquiryStatus[0].t,
       productType: this.$route.query.C2 || 6,
       searchType: false,
       searchKey: {},
@@ -69,7 +70,7 @@ export default {
         { prop: "saysPassed", label: "投放时间",},
         { prop: "expireTime", label: "有效期", width:130,},
         { prop: "name", label: "联系人" },
-        { prop: "companyName", label: "供应商名" },
+        { prop: "companyName", label: "采购商名" },
         { prop: "phone", label: "电话", width:120 },
         { prop: "status", label: "状态" },
         { prop: "responseCount", label: "回样数", width:60 },
@@ -89,7 +90,8 @@ export default {
         }
       }
     }
-    this.queryAction({ status: this.tagsGroup[0].t });
+
+    this.queryAction({ status: this.status });
   },
   methods: {
     queryAction(params) {
