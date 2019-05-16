@@ -116,6 +116,7 @@ export function providerListFilter(params) {
   });
 }
 
+// 新增需求回单
 export function insertInquiryReceipt(params) {
   return request({
     url: '/auth.do?cmd=insertInquiryReceipt',
@@ -125,3 +126,20 @@ export function insertInquiryReceipt(params) {
   });
 }
 
+// 修改回单信息
+export function updateInquiryReceiptInfo(params) {
+  return request({
+    url: '/auth.do?cmd=updateInquiryReceiptInfo',
+    method: 'post',
+    data: params
+  });
+}
+
+// 回单详情
+export function queryInquiryReceipt(params) {
+  return request({
+    url: '/auth.do?cmd=queryInquiryReceipt',
+    method: 'get',
+    params
+  });
+}

@@ -25,10 +25,6 @@
                 <el-form-item label="色卡编号：" prop="colorCardCode" >
                     <el-input v-model="form.colorCardCode"></el-input>
                 </el-form-item>
-                <el-form-item label="单价(元/米)：" prop="unitPrice">
-                    <el-input v-model="form.unitPrice" type="number"></el-input>
-                    <!--<el-input v-model="form.unitPrice"></el-input>-->
-                </el-form-item>
                 <el-form-item label="品名：">
                     <el-input v-model="form.productName"></el-input>
                 </el-form-item>
@@ -36,23 +32,55 @@
                     <el-input v-model="form.ingredients"></el-input>
                 </el-form-item>
                 <el-form-item label="幅宽：">
-                    <el-input v-model="form.width"></el-input>
+                    <el-input v-model="form.width" type="number">
+                        <template slot="append">CM</template>
+                    </el-input>
                 </el-form-item>
                 <el-form-item label="克重：">
-                    <el-input v-model="form.weight"></el-input>
+                    <el-input v-model="form.weight" type="number">
+                        <template slot="append">克/CM</template>
+                    </el-input>
                 </el-form-item>
+                <el-form-item label="剪版价：" prop="samplePrice">
+                    <el-input v-model="form.samplePrice" type="number" style="float: left;width: 60%"> <!--86.2-->
+                    </el-input>
+                    <el-select v-model="form.cuttingUnit">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="大货价：" prop="unitPrice">
+                    <el-input v-model="form.unitPrice" type="number" style="float: left;width: 60%"></el-input>
+                    <el-select v-model="form.largeUnit">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="免费色卡：">
+                    <el-radio-group v-model="form.colorCard" style="min-width: 145px">
+                        <el-radio :label='1' style="">提供</el-radio>
+                        <el-radio :label='2'>不提供</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
                 <el-form-item label="是否现货：">
                     <el-radio-group v-model="form.spotStatus">
-                        <el-radio label='0'>现货</el-radio>
-                        <el-radio label='1'>定制</el-radio>
+                        <el-radio :label='0'>现货</el-radio>
+                        <el-radio :label='1'>定制</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="调样价格：">
-                    <el-radio-group v-model="form.sampleStatus" style="min-width: 145px">
-                        <el-radio label='0' style="">免费</el-radio>
-                        <el-radio label='1'>收费</el-radio>
-                    </el-radio-group>
-                    <el-input v-model="form.samplePrice" style="width: 100px;float: right;margin-right: 80%" :disabled="flag" placeholder="元" type="number"></el-input>
+                <el-form-item label="库存：" prop="stock">
+                    <el-input v-model="form.stock" type="number">
+                        <template slot="append">{{unitName[form.largeUnit]}}</template>
+                    </el-input>
+                    <!--<el-input v-model="form.unitPrice"></el-input>-->
                 </el-form-item>
                 <el-form-item label="面料说明：">
                     <el-input type="textarea" v-model="form.description" :autosize="{minRows: 5}"></el-input>
@@ -83,6 +111,7 @@
 import { insertInquiryReceipt } from '@/api/inquiry';
 import { getInfo } from '@/api/user';
 import EbUpload from '@/components/EbUpload';
+import global from '@/global/global';
 // import { parseTime, cloneObj, byTypeGetObj, formatTime } from '@/utils';
 
 export default {
@@ -105,7 +134,22 @@ export default {
         }
       }, 500);
     };
+    var checkNum = (rule, value, callback) => {
+      setTimeout(() => {
+        // if (!Number.isInteger(value)) {
+        if (isNaN(value)) {
+          callback(new Error('请输入数字值'));
+        } else {
+          if (value < 0) {
+            callback(new Error('必须大于0'));
+          } else {
+            callback();
+          }
+        }
+      }, 500);
+    };
     return {
+      unitName: global.unitName,
       title: '给客户回样',
       CLOTH_STYLE: { 1: '针织', 2: '梭织' },
       flag: true,
@@ -118,44 +162,49 @@ export default {
       isGo: true,
       tmpProviderId: 0,
       tmpInquiryId: 0,
-      tmpImgUrls: [], // 临时的图片url数组
+      // tmpImgUrls: [], // 临时的图片url数组
       form: {
         userId: 0, // 供应商Id
         inquiryId: 0,
         imgUrlListValue: [],
         colorCardCode: '',
-        unitPrice: 0.0,
+        unitPrice: null,
         productName: '',
         ingredients: '',
         width: '',
         weight: '',
-        spotStatus: '0', // 0现货
-        sampleStatus: '0', // 0免费
-        samplePrice: 0.0, // 样品费
-        description: ''
+        spotStatus: 0, // 0现货
+        sampleStatus: null, // 0免费
+        samplePrice: null, // 样品费
+        description: '',
+        colorCard: 1,
+        stock: null,
+        cuttingUnit: 1,
+        largeUnit: 1
       },
       rules: {
         colorCardCode: [{ required: true, message: '色卡编号不能为空' }],
-        unitPrice: [{ required: true },
-          { validator: checkPrice, trigger: 'blur' }]
+        samplePrice: [{ required: true }, { validator: checkPrice, trigger: 'blur' }],
+        unitPrice: [{ validator: checkNum, trigger: 'blur' }],
+        stock: [{ validator: checkNum, trigger: 'blur' }]
       },
-      providerInfo: []
+      providerInfo: [],
+      options: [{
+        value: 1,
+        label: '元/米'
+      }, {
+        value: 2,
+        label: '元/公斤'
+      }, {
+        value: 3,
+        label: '元/码'
+      }],
+      value: 1
     };
   },
   created() {
-    // 保持id,以免刷新丢失
-    // if (sessionStorage.getItem('providerId')) {
-    //   this.tmpProviderId = sessionStorage.getItem('providerId');
-    // }
-    // if (sessionStorage.getItem('inquiryId')) {
-    //   this.tmpInquiryId = sessionStorage.getItem('inquiryId');
-    // }
     this.tmpProviderId = this.$route.query.providerId; // 来自路由传参
     this.tmpInquiryId = this.$route.query.inquiryId; // 来自路由传参
-    // this.tmpProviderId = 29239; // 测试值
-    // this.tmpInquiryId = 72; // 测试值
-    // sessionStorage.setItem('providerId', this.tmpProviderId);
-    // sessionStorage.setItem('inquiryId', this.tmpInquiryId);
     // 获取供应商详情
     getInfo(this.tmpProviderId).then(res => {
       if (res.regTel) { // 注册电话必须有
@@ -194,15 +243,18 @@ export default {
         });
         this.isGo = false;
       } else { this.isGo = true; }
-      if (this.form.colorCardCode === '' || this.form.unitPrice <= 0) {
+      if (this.form.colorCardCode === '' || this.form.samplePrice <= 0) {
         this.$message({
-          message: '色卡编号或者单价输入不正确！',
+          message: '请正确输入色卡编号或者单价！',
           type: 'warning'
         });
         this.isGo = false;
       } else { this.isGo = true; }
-      // 图片数组去重
-      this.form.imgUrlListValue = this.uniqArray(this.tmpImgUrls);
+      // 图片url数组
+      this.form.imgUrlListValue = [];
+      this.imageList.forEach(obj => {
+        this.form.imgUrlListValue.push(obj.image);
+      });
       if (this.form.imgUrlListValue.length <= 0) {
         this.$message({
           message: '请上传图片',
@@ -215,15 +267,17 @@ export default {
       // 上传form表单
       let formdata = {};
       formdata['receipt'] = JSON.stringify(this.form);
+      // this.isGo = false;
       if (this.isGo) {
         insertInquiryReceipt(formdata).then(res => {
-          if (res.body.exId) {
+          console.log('send=>res', res);
+          if (res.exId) {
             this.$message({
-              message: res.body.exDesc,
+              message: res.exDesc,
               type: 'warning'
             });
           }
-          if (res.body.result === 0) {
+          if (res.result === 0) {
             this.$message({
               message: '已提交成功，请等待客户确认并联系您！',
               type: 'success'
@@ -271,20 +325,6 @@ export default {
       }
       return temp;
     },
-    handleImgRemove(data, fileList) {
-      this.tmpImgUrls = [];
-      if (fileList.length > 0) {
-        fileList.forEach(obj => {
-          this.tmpImgUrls.push(obj.url);
-        });
-      }
-      for (let i = 0; i < this.imageList.length; i++) {
-        if (data.uid === this.imageList[i].uid) {
-          this.imageList.splice(i, 1);
-          break;
-        }
-      }
-    },
     handlePictureCardPreview(data, fileList) {
       for (let i = 0; i < fileList.length; i++) {
         fileList[i].url = fileList[i].image;
@@ -296,36 +336,40 @@ export default {
       this.preview.dialogVisible = true;
     },
     handleImgUploadSuccess(res, file, fileList) {
-      this.tmpImgUrls = [];
-      if (fileList.length > 0) {
-        fileList.forEach(obj => {
-          this.tmpImgUrls.push(obj.url);
-        });
-        for (let i = 0; i < fileList.length; i++) {
-          if (fileList[i].status !== 'success') {
-            return false;
-          }
+      for (let i = 0; i < fileList.length; i++) {
+        if (fileList[i].status !== 'success') {
+          return false;
         }
-        for (let i = 0; i < fileList.length; i++) {
-          if (fileList[i].response) {
-            let isHas = false;
-            for (let j = 0; j < this.imageList.length; j++) {
-              if (this.imageList[j].uid === fileList[i].uid) {
-                isHas = true;
-                break;
-              }
+      }
+      for (let i = 0; i < fileList.length; i++) {
+        if (fileList[i].response) {
+          let isHas = false;
+          for (let j = 0; j < this.imageList.length; j++) {
+            if (this.imageList[j].uid === fileList[i].uid) {
+              isHas = true;
+              break;
             }
-            let image = fileList[i].response.urls ? fileList[i].response.urls[0] : null;
-            if (!isHas && image) {
-              fileList[i].image = image.image;
-              fileList[i].imageId = image.imageId;
-              fileList[i].imgType = image.imageType;
-              delete fileList[i].response;
-              this.imageList.push(fileList[i]);
-            }
+          }
+          let image = fileList[i].response.urls ? fileList[i].response.urls[0] : null;
+          if (!isHas && image) {
+            fileList[i].image = image.image;
+            fileList[i].imageId = image.imageId;
+            fileList[i].imgType = image.imageType;
+            delete fileList[i].response;
+            this.imageList.push(fileList[i]);
           }
         }
       }
+      // console.log('success=>this.imageList', this.imageList);
+    },
+    handleImgRemove(data, fileList) {
+      for (let i = 0; i < this.imageList.length; i++) {
+        if (data.uid === this.imageList[i].uid) {
+          this.imageList.splice(i, 1);
+          break;
+        }
+      }
+      // console.log('remove=>this.imageList', this.imageList);
     },
     beforePreviewClose(done) {
       this.preview.list = []; // 暂时解决图片预览initialIndex改变，activeIndex不变的问题
