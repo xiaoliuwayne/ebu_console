@@ -2,7 +2,7 @@ import request from '@/utils/request';
 import global_ from '@/global/global';
 import { parseTime, cloneObj, byTypeGetObj, formatTime } from '@/utils';
 
-const inquiryStatus = global_.inquiryStatus;
+const inquiryStatusD = global_.inquiryStatusD;
 
 export function getList(params) {
   return request({
@@ -10,29 +10,41 @@ export function getList(params) {
     method: 'get',
     params
   }).then(res => {
-    let list = res.list;
 
-    let formatList = list.map((item) => {
-      return {
+	let list = res.list
 
-        inquiryId: item.inquiryId,
-        image: item.imageList[0],
-        createTime: parseTime(item.createTime, '{m}-{d} {h}:{i}'),
-        saysPassed: formatTime(item.createTime / 1000),
-        expireTime: parseTime(item.expireTime, '{m}-{d} {h}:{i}'),
-        name: item.name,
-        companyName: item.companyName,
-        phone: item.phone,
-        status: byTypeGetObj(item.status, inquiryStatus).n,
-        responseCount: item.responseCount == 0 ? '—' : item.responseCount,
-        confirmedCount: item.confirmedCount,
-        deputeCollect: item.deputeCollect == 0 ? '否' : '是'
-      };
-    });
 
-    res.formatList = formatList;
+  let formatList = list.map((item) => {
 
-    return res;
+	let deliverPay = item.deliverPayTime ? `${parseTime(item.deliverPayTime, '{m}-{d} {h}:{i}')} ￥ ${item.deliverPayAmount}`:'未支付'
+
+	let createTime = ((Date.now() - item.createTime) / 1000 / 60 / 60) > 24 ? parseTime(item.createTime, '{m}-{d} {h}:{i}') : parseTime(item.createTime, '{m}-{d} {h}:{i}') + formatTime(item.createTime / 1000)
+
+
+		return {
+
+			inquiryId		: item.inquiryId,
+			image			: item.imageList[0],
+			createTime		: createTime,
+			saysPassed		: formatTime(item.createTime / 1000),
+			expireTime		: parseTime(item.expireTime, '{m}-{d} {h}:{i}'),
+			name			: item.name,
+			companyName		: item.companyName,
+			phone			: item.phone,
+			status			: byTypeGetObj(item.status, inquiryStatusD).n,
+			responseCount	: item.responseCount == 0 ? '—' : item.responseCount,
+			confirmedCount	: item.confirmedCount,
+			deliverPay 		: deliverPay,
+			deputeCollect	: item.deputeCollect == 0 ? '否' : '是',
+			detail			: item.detail
+
+		}
+
+	})
+
+    res.formatList = formatList
+
+    return res
   });
 }
 
@@ -41,15 +53,25 @@ export function inquiryDetail(params) {
     url: '/auth.do?cmd=queryInquiryDetail',
     method: 'get',
     params
-  });
+  })
 }
+
+export function providerListByMemo(params) {
+  return request({
+    url: '/auth.do?cmd=providerListByMemo',
+    method: 'get',
+    params
+  })
+}
+
+
 
 export function updateInquiry(params) {
   return request({
     url: '/auth.do?cmd=updateInquiry',
     method: 'post',
     data: params
-  });
+  })
 }
 
 export function providerListByKeys(params) {
@@ -57,7 +79,7 @@ export function providerListByKeys(params) {
     url: '/auth.do?cmd=providerListByKeys',
     method: 'get',
     params
-  });
+  })
 }
 
 export function sendInquiry(params) {
@@ -65,7 +87,7 @@ export function sendInquiry(params) {
     url: '/auth.do?cmd=sendInquiry2Users',
     method: 'post',
     data: params
-  });
+  })
 }
 
 export function getInquiryReceiptList(params) {
@@ -139,7 +161,9 @@ export function updateInquiryReceiptInfo(params) {
 export function queryInquiryReceipt(params) {
   return request({
     url: '/auth.do?cmd=queryInquiryReceipt',
+    // url: '/show.do?cmd=queryInquiryReceipt',
     method: 'get',
     params
   });
 }
+
