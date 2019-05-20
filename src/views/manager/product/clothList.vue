@@ -10,25 +10,27 @@
       <el-button @click="handleSearch" type="primary" icon="el-icon-search" size="mini">搜索</el-button>
     </div>
     <eb-table :list="list" :columns="columns">
-      <el-table-column slot="opt" label="操作" width="180">
-        <template slot-scope="{ row }">
-          <el-button size="mini" type="primary" @click="showDetail(row.productId)" plain>{{btnText[row.status]}}</el-button>
-          <el-button size="mini" type="primary" @click="editDetail(row.productId)" plain>修改</el-button>
-          <!--<el-button size="mini" type="primary" @click="editDetailNew(row.productId)" plain>编辑</el-button>-->
-        </template>
-      </el-table-column>
-      <el-table-column slot="img" label="产品图片" width="80">
-        <template slot-scope="{ row }">
-          <el-popover
-            placement="right"
-            width="225"
-            trigger="hover">
-            <img :src="row.image" alt="" style="width: 200px;height: 200px;">
-            <span slot="reference" style="cursor: pointer;">查看图片</span>
-          </el-popover>
-        </template>
-      </el-table-column>
-    </eb-table>
+    <el-table-column slot="opt" label="操作" width="180">
+      <template slot-scope="{ row }">
+        <el-button size="mini" type="primary" @click="showDetail(row.productId)" v-if="row.status==0||row.status==3" plain>{{btnText[row.status]}}</el-button>
+        <el-button size="mini" type="primary" @click="updateStatus(row.productId, row.status)" v-else-if="row.status==1||row.status==2" plain>{{btnText[row.status]}}</el-button>
+        <el-button size="mini" type="primary" @click="editDetail(row.productId)" plain>修改</el-button>
+        <!--<el-button size="mini" type="primary" @click="editDetailNew(row.productId)" plain>编辑</el-button>-->
+      </template>
+    </el-table-column>
+    <el-table-column slot="img" label="产品图片" width="150">
+      <template slot-scope="{ row }">
+        <!--<el-popover-->
+        <!--placement="right"-->
+        <!--width="225"-->
+        <!--trigger="hover">-->
+        <!--<img :src="row.image" alt="" style="width: 200px;height: 200px;">-->
+        <!--<span slot="reference" style="cursor: pointer;">查看图片</span>-->
+        <!--</el-popover>-->
+        <img :src="row.image" alt="" style="width: 100px;height: 100px;">
+      </template>
+    </el-table-column>
+  </eb-table>
     <div class="pagination-box">
       <el-pagination
         @current-change="handleCurrentChange"
@@ -42,7 +44,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { getClothList } from '@/api/product';
+  import { getClothList, modifyProductStatus } from '@/api/product';
   import EbTable from '@/components/EbTable';
   import SearchInput from '@/components/SearchInputGroup';
   import { setTotalSize, cloneObj } from '@/utils';
@@ -59,7 +61,7 @@
         totalSize: 0,
         // tagsGroup: this.GLOBAL.productStatus,
         uid: this.$route.query.uid || 0,
-        status: '',
+        status: '0',
         productType: this.$route.query.C2 || 6,
         searchType: false,
         tabStatus: this.GLOBAL.productStatus,
@@ -127,7 +129,7 @@
           }
         }
       }
-      this.queryAction({ status: this.tabStatus[0].t });
+      this.queryAction();
     },
     methods: {
       queryAction(params) {
@@ -147,7 +149,9 @@
         query.roleType = this.$store.getters.detail.roleType;
         query.productType = 6;
         query.queryType = 3;
-        query.status = query.status == -1 ? '' : (query.status || this.status);
+        query.status = query.status || this.status;
+        this.status = query.status;
+        query.status == -1 && (query.status = '');
         query.page = parseInt(query.page) || 0;
         query.pageSize = parseInt(query.pageSize) || this.pageSize;
         this.page = query.page;
@@ -191,6 +195,34 @@
         delete queryKey.createTime;
         this.searchKey = queryKey;
         this.queryAction({ page: 0 });
+      },
+      updateStatus(id, oldStatus) {
+        let status = oldStatus == 1 ? 2 : oldStatus == 2 ? 1 : 0;
+        if (!status) { return false; }
+        let params = {
+          productType: 6,
+          productId: id,
+          status: status
+        };
+        let text = '';
+        if (status == 2) {
+          text = '下架成功！';
+        } else if (status == 1) {
+          text = '上架成功！';
+        }
+        modifyProductStatus(params).then(res => {
+          this.$message({
+            type: 'success',
+            message: text,
+            duration: 2000
+          });
+          for (let i = 0; i < this.list.length; i++) {
+            if (this.list[i].productId == id) {
+              this.list[i].status = status;
+              break;
+            }
+          }
+        });
       },
       handleChange(value, data) {
         console.log(data);

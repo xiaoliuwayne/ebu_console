@@ -3,6 +3,7 @@
         <el-main>
             <h3>上传需求方在找的面料照片：</h3>
             <p style="padding-bottom: 15px">请上传要找的完整图案、细节图、尺寸参照图、正反面对比等</p>
+            <!--:file-list="imageList.filter(function(value){return value.imgType === 5})"-->
             <eb-upload class="product-image"
                        list-type="picture-card"
                        :multiple="true"
@@ -111,42 +112,43 @@
   import { getInfo } from '@/api/user';
   import EbUpload from '@/components/EbUpload';
   import global from '@/global/global';
+  import { checkNum, setProviderInfo, checkPrice } from './utils';
   // import { parseTime, cloneObj, byTypeGetObj, formatTime } from '@/utils';
 
   export default {
     components: { EbUpload },
     data() {
-      var checkPrice = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('价格不能为空'));
-        }
-        setTimeout(() => {
-          // if (!Number.isInteger(value)) {
-          if (isNaN(value)) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value < 0) {
-              callback(new Error('必须大于0'));
-            } else {
-              callback();
-            }
-          }
-        }, 500);
-      };
-      var checkNum = (rule, value, callback) => {
-        setTimeout(() => {
-          // if (!Number.isInteger(value)) {
-          if (isNaN(value)) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value < 0) {
-              callback(new Error('必须大于0'));
-            } else {
-              callback();
-            }
-          }
-        }, 500);
-      };
+      // var checkPrice = (rule, value, callback) => {
+      //   if (!value) {
+      //     return callback(new Error('价格不能为空'));
+      //   }
+      //   setTimeout(() => {
+      //     // if (!Number.isInteger(value)) {
+      //     if (isNaN(value)) {
+      //       callback(new Error('请输入数字值'));
+      //     } else {
+      //       if (value < 0) {
+      //         callback(new Error('必须大于0'));
+      //       } else {
+      //         callback();
+      //       }
+      //     }
+      //   }, 500);
+      // };
+      // var checkNum = (rule, value, callback) => {
+      //   setTimeout(() => {
+      //     // if (!Number.isInteger(value)) {
+      //     if (isNaN(value)) {
+      //       callback(new Error('请输入数字值'));
+      //     } else {
+      //       if (value < 0) {
+      //         callback(new Error('必须大于0'));
+      //       } else {
+      //         callback();
+      //       }
+      //     }
+      //   }, 500);
+      // };
       return {
         unitName: global.unitName,
         title: '给客户回样',
@@ -203,13 +205,14 @@
       };
     },
     created() {
-      this.tmpProviderId = this.$route.query.providerId; // 来自路由传参
-      this.tmpInquiryId = this.$route.query.inquiryId; // 来自路由传参
-      this.tmpReceiptId = this.$route.query.receiptId; // 来自路由传参
+      this.tmpProviderId = this.$route.query.providerId || 29240; // 来自路由传参
+      this.tmpInquiryId = this.$route.query.inquiryId || 129; // 来自路由传参
+      this.tmpReceiptId = this.$route.query.receiptId || 201; // 来自路由传参
       // 获取供应商详情
       getInfo(this.tmpProviderId).then(res => {
         if (res.regTel) { // 注册电话必须有
-          this.setProviderInfo(res);
+          // this.setProviderInfo(res);
+          setProviderInfo(res, this.providerInfo);
         }
       }).catch(() => {
         this.$message({
@@ -220,7 +223,7 @@
       // 获取回单详情
       if (this.tmpReceiptId > 0) {
         queryInquiryReceipt(
-          { 'receiptId': this.receiptId }
+          { receiptId: this.tmpReceiptId }
         ).then(res => {
           if (res.exId) {
             this.$message({
@@ -244,7 +247,11 @@
           this.form.stock = res.stock;
           this.form.description = res.description;
           this.form.imgUrlListValue = []; // 在发送时将this.imageList值赋过来
-          this.imageList = res.imgUrlListValue;
+          let tmp = res.imgUrlListValue;
+          tmp.forEach(url => { // 处理图片上传
+            this.imageList.push({ imgType: 5, image: url, url: url });
+          });
+          console.log('this.imageList', this.imageList);
         }).catch(
           () => {
             this.$message({
@@ -254,21 +261,21 @@
           });
       }
     },
-    // 监听form对象sampleStatus属性的变化
-    computed: {
-      sampleStatus() {
-        return this.form.sampleStatus;
-      }
-    },
-    watch: {
-      sampleStatus(newVal, oldVal) {
-        if (newVal === '1') {
-          this.flag = false;
-        } else {
-          this.flag = true;
-        }
-      }
-    },
+    // // 监听form对象sampleStatus属性的变化
+    // computed: {
+    //   sampleStatus() {
+    //     return this.form.sampleStatus;
+    //   }
+    // },
+    // watch: {
+    //   sampleStatus(newVal, oldVal) {
+    //     if (newVal === '1') {
+    //       this.flag = false;
+    //     } else {
+    //       this.flag = true;
+    //     }
+    //   }
+    // },
     methods: {
       submit() { // 改为修改的方法
         this.form.userId = this.tmpProviderId;
@@ -304,7 +311,7 @@
         this.form.samplePrice = parseFloat(this.form.samplePrice);
         // 上传form表单
         let formdata = {};
-        formdata['receipt'] = JSON.stringify(this.form);
+        formdata['param'] = JSON.stringify(this.form);
         // this.isGo = false;
         if (this.isGo) {
           updateInquiryReceiptInfo(formdata).then(res => {
@@ -332,38 +339,38 @@
           });
         }
       },
-      dealKeyWords(keywords) {
-        let zz = ''; // 1 针织
-        let sz = ''; // 2 梭织
-        keywords.forEach(item => {
-          if (item.groupId === 1) {
-            zz = zz + item.keyword + ' ';
-          } else {
-            sz = sz + item.keyword + ' ';
-          }
-        });
-        return [{ 'groupId': 1, 'value': zz }, { 'groupId': 2, 'value': sz }];
-      },
-      setProviderInfo(data) {
-        let keyWords = [];
-        if (data.busiKeywords && data.busiKeywords.length > 0) {
-          keyWords = this.dealKeyWords(data.busiKeywords);
-        }
-        this.providerInfo.push({ 'label': '供应商名称', 'value': data.name }); // 公司名
-        this.providerInfo.push({ 'label': '联系人', 'value': data.linkman });
-        this.providerInfo.push({ 'label': '移动电话', 'value': data.regTel });
-        this.providerInfo.push({ 'label': '地址', 'value': data.address });
-        this.providerInfo.push({ 'label': '主营业务', 'value': keyWords }); // 关键字
-      },
-      uniqArray(array) { // 数组去重
-        let temp = [];
-        for (var i = 0; i < array.length; i++) {
-          if (temp.indexOf(array[i]) === -1) {
-            temp.push(array[i]);
-          }
-        }
-        return temp;
-      },
+      // dealKeyWords(keywords) {
+      //   let zz = ''; // 1 针织
+      //   let sz = ''; // 2 梭织
+      //   keywords.forEach(item => {
+      //     if (item.groupId === 1) {
+      //       zz = zz + item.keyword + ' ';
+      //     } else {
+      //       sz = sz + item.keyword + ' ';
+      //     }
+      //   });
+      //   return [{ 'groupId': 1, 'value': zz }, { 'groupId': 2, 'value': sz }];
+      // },
+      // setProviderInfo(data) {
+      //   let keyWords = [];
+      //   if (data.busiKeywords && data.busiKeywords.length > 0) {
+      //     keyWords = this.dealKeyWords(data.busiKeywords);
+      //   }
+      //   this.providerInfo.push({ 'label': '供应商名称', 'value': data.name }); // 公司名
+      //   this.providerInfo.push({ 'label': '联系人', 'value': data.linkman });
+      //   this.providerInfo.push({ 'label': '移动电话', 'value': data.regTel });
+      //   this.providerInfo.push({ 'label': '地址', 'value': data.address });
+      //   this.providerInfo.push({ 'label': '主营业务', 'value': keyWords }); // 关键字
+      // },
+      // uniqArray(array) { // 数组去重
+      //   let temp = [];
+      //   for (var i = 0; i < array.length; i++) {
+      //     if (temp.indexOf(array[i]) === -1) {
+      //       temp.push(array[i]);
+      //     }
+      //   }
+      //   return temp;
+      // },
       handlePictureCardPreview(data, fileList) {
         for (let i = 0; i < fileList.length; i++) {
           fileList[i].url = fileList[i].image;

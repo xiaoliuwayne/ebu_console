@@ -46,62 +46,72 @@
       <el-main>
         <el-form :model="providerForm" status-icon ref="providerForm" label-width="100px" class="providerForm">
           
-          <el-form-item label="联系电话:" prop="regTel" required>
-            <el-input v-model="providerForm.regTel"></el-input>
-          </el-form-item>
-          <el-form-item label="公司名称:" prop="name" required>
-            <el-input v-model="providerForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="店铺编号:" prop="shopNo">
-            <el-input v-model="providerForm.shopNo"></el-input>
-          </el-form-item>
-          <el-form-item label="店铺地址:" prop="address" required>
-            <el-input v-model="providerForm.address"></el-input>
-          </el-form-item>
-          <el-form-item label="联系人:" prop="linkman">
-            <el-input v-model="providerForm.linkman"></el-input>
-          </el-form-item>
-          <el-form-item label="固定电话:" prop="tel">
-            <el-input v-model="providerForm.tel"></el-input>
-          </el-form-item>
-          <el-form-item label="主营关键字:">
-            <div style="display:flex;">
-                <div>
-                  <p v-if="matching[0].length != 0">
-                    <label>针织：</label>
-                    <span v-for="(val,index) in matching[0]" :key="index">{{busiScope[2][val]}}、</span>
-                  </p>
-                  <p v-if="matching[1].length != 0">
-                    <label>梭织：</label>
-                    <span v-for="(val,index) in matching[1]" :key="index">{{busiScope[2][val]}}、</span>
-                  </p>
-                </div>
-                <el-popover
-                    placement="right"
-                    title="主营业务(面料种类)"
-                    width="600"
-                    trigger="click">
-                    <div>
-                        <label style="line-height:3;">针织：</label>
+			<el-form-item label="联系电话:" prop="regTel" required>
+				<el-input v-model="providerForm.regTel"></el-input>
+			</el-form-item>
+			<el-form-item label="公司名称:" prop="name" required>
+				<el-input v-model="providerForm.name"></el-input>
+			</el-form-item>
+			<el-form-item label="店铺编号:" prop="shopNo">
+				<el-input v-model="providerForm.shopNo"></el-input>
+			</el-form-item>
+			<el-form-item label="店铺地址:" prop="address" required>
+				<el-input v-model="providerForm.address"></el-input>
+			</el-form-item>
+			<el-form-item label="所在商圈:" prop="marketId" required>
+				<el-select v-model="providerForm.marketId" placeholder="请选择" style="width:100%;">
+					<el-option
+					v-for="item in marketRange"
+					:key="item.t"
+					:label="item.n"
+					:value="item.t">
+					</el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="联系人:" prop="linkman">
+				<el-input v-model="providerForm.linkman"></el-input>
+			</el-form-item>
+			<el-form-item label="固定电话:" prop="tel">
+				<el-input v-model="providerForm.tel"></el-input>
+			</el-form-item>
+			<el-form-item label="主营关键字:">
+				<div style="display:flex;">
+					<div>
+					<p v-if="matching[0].length != 0">
+						<label>针织：</label>
+						<span v-for="(val,index) in matching[0]" :key="index">{{busiScope[2][val]}}、</span>
+					</p>
+					<p v-if="matching[1].length != 0">
+						<label>梭织：</label>
+						<span v-for="(val,index) in matching[1]" :key="index">{{busiScope[2][val]}}、</span>
+					</p>
+					</div>
+					<el-popover
+						placement="right"
+						title="主营业务(面料种类)"
+						width="600"
+						trigger="click">
+						<div>
+							<label style="line-height:3;">针织：</label>
 
-                        <el-checkbox-group v-model="matching[0]" size="mini">
-                            <el-checkbox v-for="(value,index) in busiScope[0]" :key="index" :label="value.keyId" v-model="value.keyId" border style="margin:0 0 10px 10px;">{{value.keyword}}</el-checkbox>
-                        </el-checkbox-group>
+							<el-checkbox-group v-model="matching[0]" size="mini">
+								<el-checkbox v-for="(value,index) in busiScope[0]" :key="index" :label="value.keyId" v-model="value.keyId" border style="margin:0 0 10px 10px;">{{value.keyword}}</el-checkbox>
+							</el-checkbox-group>
 
-                        <label style="line-height:3;">梭织：</label>
+							<label style="line-height:3;">梭织：</label>
 
-                        <el-checkbox-group v-model="matching[1]" size="mini">
-                            <el-checkbox v-for="(value,index) in busiScope[1]" :key="index" :label="value.keyId"  v-model="value.keyId" border style="margin:0 0 10px 10px;">{{value.keyword}}</el-checkbox>
-                        </el-checkbox-group>
-                    </div>
-                    <el-button type="text" size="mini" slot="reference">修改</el-button>
-                </el-popover>
-            </div>
-            
-          </el-form-item>
-          <el-form-item label="备注:" prop="memo">
-            <el-input type="textarea" v-model="providerForm.memo"></el-input>
-          </el-form-item>
+							<el-checkbox-group v-model="matching[1]" size="mini">
+								<el-checkbox v-for="(value,index) in busiScope[1]" :key="index" :label="value.keyId"  v-model="value.keyId" border style="margin:0 0 10px 10px;">{{value.keyword}}</el-checkbox>
+							</el-checkbox-group>
+						</div>
+						<el-button type="text" size="mini" slot="reference">修改</el-button>
+					</el-popover>
+				</div>
+				
+			</el-form-item>
+			<el-form-item label="备注:" prop="memo">
+				<el-input type="textarea" v-model="providerForm.memo"></el-input>
+			</el-form-item>
           <!-- <el-form-item label="经营品类:">
             <el-checkbox-group v-model="providerForm.majorList">
               <el-checkbox v-for="type in types" :label="type.catId" :key="type.catId">{{type.major}}</el-checkbox>
@@ -127,16 +137,18 @@
   </div>
 </template>
 <script>
-  import { fabricKeywords } from '@/api/product'
-  import { getInfo, changeUserMgr, option,selfMdfProvider } from '@/api/user';
-  import { parseTime, cloneObj } from '@/utils/index';
-  import { OPEN_API } from '../../../../config/prod.env';
+	import { fabricKeywords } from '@/api/product'
+	import { getInfo, changeUserMgr, option,selfMdfProvider } from '@/api/user';
+	import { parseTime, cloneObj } from '@/utils/index';
+	import { OPEN_API } from '../../../../config/prod.env';
+	import  global_  from '@/global/global';
 
   const oploadApi = OPEN_API.slice(1, -1);
 
   export default {
     data() {
       return {
+		marketRange:cloneObj(global_.marketRange),
         uploadAvatarApi: oploadApi + '/upload?type=0',
         types: [{ catId: 31, major: '面料' }, { catId: 32, major: '辅料' }],
         userName: '',
@@ -150,7 +162,8 @@
           linkman: '',
           tel: '',
           name: '',
-          address: '',
+		  address: '',
+		  marketId: '',
           regTel:'',
           shopNo:'',
           memo:'',
@@ -173,7 +186,7 @@
     },
     created() {
       this.userId = this.$route.query.pid;
-      this.getUserDetail();
+	  this.getUserDetail();
     },
     methods: {
       async getUserDetail() {
@@ -200,7 +213,8 @@
           this.providerForm.address   = res.address
           this.providerForm.regTel    = res.regTel
           this.providerForm.shopNo    = res.shopNo
-          this.providerForm.memo      = res.memo
+		  this.providerForm.memo      = res.memo
+		  this.providerForm.marketId  = String(res.marketId)
           
           for(let item of res.busiKeywords){
               if(item.groupId == 1){

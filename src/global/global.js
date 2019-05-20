@@ -21,27 +21,54 @@ const inquiryStatus = [     // 需求订单状态
   { t: '0', n: '全部',   s: 'ALL' },
   /* { t: '-1',n: '正在找', s: '' }, */
   { t: '1', n: '待审核', s: '' },
-  { t: '2', n: '已发布', s: '' },
+  { t: '-6', n: '已发布', s: '' },
+  /* { t: '6', n: '已回样', s: '' }, */
+  { t: '-4', n: '跑腿中', s: '' },
+  /* { t: '8', n: '已发货', s: '' }, */
+  /* { t: '9', n: '已取消', s: '' }, */
   /* { t: '3', n: '已过期', s: '' }, */
   { t: '4', n: '已关闭', s: '' },
-  { t: '99',n: '委托跑腿', s: '' },
+  { t: '5', n: '无效单', s: '' },
+/*   { t: '-4',n: '委托跑腿', s: '' }, */
+];
+const marketRange = [     // 商圈范围
+  { t: '0', n: '全国', s: '' },
+  { t: '1', n: '广州中大', s: '' },
+  { t: '2', n: '绍兴柯桥', s: '' },
+  { t: '3', n: '吴江盛泽', s: '' },
+  { t: '4', n: '福建石狮', s: '' },
+  { t: '5', n: '东莞虎门', s: '' },
+  { t: '6', n: '深圳东门', s: '' },
+  { t: '7', n: '佛山平地', s: '' },
+  { t: '99', n: '其他', s: '' },
+];
+const inquiryStatusD = [     // 需求订单状态
+  { t: '1', n: '未发布', s: '' },
+  { t: '2', n: '已发布', s: '' },
+  { t: '3', n: '已过期', s: '' },
+  { t: '4', n: '已结束', s: '' },
+  { t: '5', n: '无效单', s: '' },
+  { t: '6', n: '已回样', s: '' },
+  { t: '7', n: '已委托', s: '' },
+  { t: '8', n: '已发货', s: '' },
+  { t: '9', n: '已取消', s: '' },
 ];
 const userRoleType = [
   { t: '23', n: '贸易商', s: 'TRADER' },
   { t: '24', n: '贸易商品检员', s: 'AUDITOR' },
   { t: '25', n: '贸易商录入员', s: 'OPERATOR' },
   { t: '20', n: '原材料采购商', s: 'BUYER' },
-  { t: '21', n: '原材料录入员', s: 'IMPORTER' },
+  { t: '21', n: '商品录入员', s: 'IMPORTER' },
   { t: '22', n: '原材料供应商', s: 'PROVIDER' },
   { t: '3',  n: '超级管理员', s: 'ADMIN' },
   { t: '17', n: '运营管理员', s: 'OPERATION' },
   { t: '18', n: '财务管理员', s: 'FINANCE' },
   { t: '19', n: '跟单管理员', s: 'DOCUMENTARY' },
   { t: '51', n: '采购管理人员', s: 'MANABUYER' },
-  { t: '52', n: '客服人员', s: 'CUSTOMSERVICE' },
+  { t: '52', n: '卖布客服', s: 'CUSTOMSERVICE' },
   { t: '61', n: '找布客服', s: 'LOOKINGCLOTH' }
 ];
-const managerRoles = ['ADMIN', 'OPERATION', 'FINANCE', 'DOCUMENTARY', 'MANABUYER', 'CUSTOMSERVICE'];
+const managerRoles = ['ADMIN', 'OPERATION', 'FINANCE', 'DOCUMENTARY', 'MANABUYER', 'CUSTOMSERVICE', 'IMPORTER'];
 
 const customizationConfirmType = [
   { t: '-1', n: '全部', s: 'ALL' },
@@ -241,11 +268,13 @@ export default {
   contractPayway,
   customizationStatus,
   inquiryStatus,
+  inquiryStatusD,
   paymentStatus,
   settleAccountStatus,
   paySchedule,
   customizeTypes,
   customizationPayWays,
   customizationConfirmType,
-  customizationOrderStatus
+  customizationOrderStatus,
+  marketRange
 };

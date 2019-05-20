@@ -4,6 +4,7 @@
       <search-input :inputList="inputGroup" ref="queryData"></search-input>
     </div>
     <div class="searchBtn">
+      <el-button @click="$router.push({path:'/buyercreated'})" type="primary" size="mini">新建采购商</el-button>
       <el-button @click="handleSearch" type="primary" icon="el-icon-search" size="mini">搜索</el-button>
     </div>
     <eb-table :list="list" :columns="columns">

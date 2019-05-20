@@ -19,9 +19,11 @@
       </el-form-item>
       <el-form-item label="角色:">
         <el-radio-group v-model="roleName">
-          <el-radio :label="52">客服</el-radio>
+          <el-radio :label="52">卖布客服</el-radio>
           <el-radio :label="51">采购员</el-radio>
           <el-radio :label="61">找布客服</el-radio>
+          <el-radio :label="21">商品录入员</el-radio>
+          <el-radio :label="18">财务</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item>

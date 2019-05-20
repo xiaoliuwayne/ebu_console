@@ -97,7 +97,7 @@
           }
         }
       }
-      this.queryAction({ status: this.statusTag[0].t });
+      this.queryAction();
     },
     methods: {
       queryAction(params) {
@@ -115,6 +115,7 @@
           query[key] = params[key];
         }
         query.status = query.status || this.status;
+        this.status = query.status;
         query.page = parseInt(query.page) || 0;
         query.pageSize = parseInt(query.pageSize) || this.pageSize;
         query.getItems = 0;

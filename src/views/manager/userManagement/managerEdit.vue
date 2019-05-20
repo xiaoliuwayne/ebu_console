@@ -21,6 +21,7 @@
         <el-radio-group v-model="roleName">
           <el-radio :label="52">客服</el-radio>
           <el-radio :label="51">采购员</el-radio>
+          <el-radio :label="61">找布客服</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item>

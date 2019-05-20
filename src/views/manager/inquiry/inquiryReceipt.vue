@@ -112,42 +112,43 @@ import { insertInquiryReceipt } from '@/api/inquiry';
 import { getInfo } from '@/api/user';
 import EbUpload from '@/components/EbUpload';
 import global from '@/global/global';
+import { checkNum, setProviderInfo, checkPrice } from './utils';
 // import { parseTime, cloneObj, byTypeGetObj, formatTime } from '@/utils';
 
 export default {
   components: { EbUpload },
   data() {
-    var checkPrice = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('价格不能为空'));
-      }
-      setTimeout(() => {
-        // if (!Number.isInteger(value)) {
-        if (isNaN(value)) {
-          callback(new Error('请输入数字值'));
-        } else {
-          if (value < 0) {
-            callback(new Error('必须大于0'));
-          } else {
-            callback();
-          }
-        }
-      }, 500);
-    };
-    var checkNum = (rule, value, callback) => {
-      setTimeout(() => {
-        // if (!Number.isInteger(value)) {
-        if (isNaN(value)) {
-          callback(new Error('请输入数字值'));
-        } else {
-          if (value < 0) {
-            callback(new Error('必须大于0'));
-          } else {
-            callback();
-          }
-        }
-      }, 500);
-    };
+    // var checkPrice = (rule, value, callback) => {
+    //   if (!value) {
+    //     return callback(new Error('价格不能为空'));
+    //   }
+    //   setTimeout(() => {
+    //     // if (!Number.isInteger(value)) {
+    //     if (isNaN(value)) {
+    //       callback(new Error('请输入数字值'));
+    //     } else {
+    //       if (value < 0) {
+    //         callback(new Error('必须大于0'));
+    //       } else {
+    //         callback();
+    //       }
+    //     }
+    //   }, 500);
+    // };
+    // var checkNum = (rule, value, callback) => {
+    //   setTimeout(() => {
+    //     // if (!Number.isInteger(value)) {
+    //     if (isNaN(value)) {
+    //       callback(new Error('请输入数字值'));
+    //     } else {
+    //       if (value < 0) {
+    //         callback(new Error('必须大于0'));
+    //       } else {
+    //         callback();
+    //       }
+    //     }
+    //   }, 500);
+    // };
     return {
       unitName: global.unitName,
       title: '给客户回样',
@@ -208,7 +209,8 @@ export default {
     // 获取供应商详情
     getInfo(this.tmpProviderId).then(res => {
       if (res.regTel) { // 注册电话必须有
-        this.setProviderInfo(res);
+        // this.setProviderInfo(res);
+        setProviderInfo(res, this.providerInfo);
       }
     }).catch(() => {
       this.$message({
@@ -218,20 +220,20 @@ export default {
     });
   },
   // 监听form对象sampleStatus属性的变化
-  computed: {
-    sampleStatus() {
-      return this.form.sampleStatus;
-    }
-  },
-  watch: {
-    sampleStatus(newVal, oldVal) {
-      if (newVal === '1') {
-        this.flag = false;
-      } else {
-        this.flag = true;
-      }
-    }
-  },
+  // computed: {
+  //   sampleStatus() {
+  //     return this.form.sampleStatus;
+  //   }
+  // },
+  // watch: {
+  //   sampleStatus(newVal, oldVal) {
+  //     if (newVal === '1') {
+  //       this.flag = false;
+  //     } else {
+  //       this.flag = true;
+  //     }
+  //   }
+  // },
   methods: {
     send() {
       this.form.userId = this.tmpProviderId;
@@ -293,38 +295,38 @@ export default {
         });
       }
     },
-    dealKeyWords(keywords) {
-      let zz = ''; // 1 针织
-      let sz = ''; // 2 梭织
-      keywords.forEach(item => {
-        if (item.groupId === 1) {
-          zz = zz + item.keyword + ' ';
-        } else {
-          sz = sz + item.keyword + ' ';
-        }
-      });
-      return [{ 'groupId': 1, 'value': zz }, { 'groupId': 2, 'value': sz }];
-    },
-    setProviderInfo(data) {
-      let keyWords = [];
-      if (data.busiKeywords && data.busiKeywords.length > 0) {
-        keyWords = this.dealKeyWords(data.busiKeywords);
-      }
-      this.providerInfo.push({ 'label': '供应商名称', 'value': data.name }); // 公司名
-      this.providerInfo.push({ 'label': '联系人', 'value': data.linkman });
-      this.providerInfo.push({ 'label': '移动电话', 'value': data.regTel });
-      this.providerInfo.push({ 'label': '地址', 'value': data.address });
-      this.providerInfo.push({ 'label': '主营业务', 'value': keyWords }); // 关键字
-    },
-    uniqArray(array) { // 数组去重
-      let temp = [];
-      for (var i = 0; i < array.length; i++) {
-        if (temp.indexOf(array[i]) === -1) {
-          temp.push(array[i]);
-        }
-      }
-      return temp;
-    },
+    // dealKeyWords(keywords) {
+    //   let zz = ''; // 1 针织
+    //   let sz = ''; // 2 梭织
+    //   keywords.forEach(item => {
+    //     if (item.groupId === 1) {
+    //       zz = zz + item.keyword + ' ';
+    //     } else {
+    //       sz = sz + item.keyword + ' ';
+    //     }
+    //   });
+    //   return [{ 'groupId': 1, 'value': zz }, { 'groupId': 2, 'value': sz }];
+    // },
+    // setProviderInfo(data) {
+    //   let keyWords = [];
+    //   if (data.busiKeywords && data.busiKeywords.length > 0) {
+    //     keyWords = this.dealKeyWords(data.busiKeywords);
+    //   }
+    //   this.providerInfo.push({ 'label': '供应商名称', 'value': data.name }); // 公司名
+    //   this.providerInfo.push({ 'label': '联系人', 'value': data.linkman });
+    //   this.providerInfo.push({ 'label': '移动电话', 'value': data.regTel });
+    //   this.providerInfo.push({ 'label': '地址', 'value': data.address });
+    //   this.providerInfo.push({ 'label': '主营业务', 'value': keyWords }); // 关键字
+    // },
+    // uniqArray(array) { // 数组去重
+    //   let temp = [];
+    //   for (var i = 0; i < array.length; i++) {
+    //     if (temp.indexOf(array[i]) === -1) {
+    //       temp.push(array[i]);
+    //     }
+    //   }
+    //   return temp;
+    // },
     handlePictureCardPreview(data, fileList) {
       for (let i = 0; i < fileList.length; i++) {
         fileList[i].url = fileList[i].image;

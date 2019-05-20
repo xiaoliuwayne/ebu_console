@@ -94,7 +94,37 @@ export const asyncRouterMap = [
         path: 'updateReceipt',
         name: 'updateReceipt',
         component: () => import('@/views/manager/inquiry/updateReceipt'),
-        meta: { title: '更新需求回单', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
+        meta: { title: '更新需求回单', icon: '' }
+        // meta: { title: '更新需求回单', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
+      }
+    ]
+  },
+  { // 需求订单管理
+    path: '',
+    component: Layout,
+    redirct: 'noredirect',
+    name: 'news',
+    meta: { title: '公告管理', icon: 'order', role: ['ADMIN', 'LOOKINGCLOTH'] },
+    children: [
+      {
+        path: 'newsList',
+        name: 'newsList',
+        component: () => import('@/views/news/newsList'),
+        meta: { title: '公告列表', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
+      },
+      {
+        path: 'newsCreated',
+        name: 'newsCreated',
+        hidden: true,
+        component: () => import('@/views/news/newsCreated'),
+        meta: { title: '公告编辑', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
+      },
+      {
+        path: 'newsEdit/:newsId',
+        name: 'newsEdit',
+        hidden: true,
+        component: () => import('@/views/news/newsEdit'),
+        meta: { title: '新增公告', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
       }
     ]
   },
@@ -104,19 +134,19 @@ export const asyncRouterMap = [
     redirect: 'noredirect',
     name: 'userManagement',
     alwaysShow: true,
-    meta: { title: '用户管理', icon: 'manager', role: ['ADMIN', 'LOOKINGCLOTH'] },
+    meta: { title: '用户管理', icon: 'manager', role: ['ADMIN', 'LOOKINGCLOTH', 'IMPORTER', 'CUSTOMSERVICE', 'FINANCE'] },
     children: [
       {
         path: 'providerList',
         name: 'providerList',
         component: () => import('@/views/manager/userManagement/providerList'),
-        meta: { title: '供应商管理', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
+        meta: { title: '供应商管理', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'IMPORTER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'buyerList',
         name: 'buyerList',
         component: () => import('@/views/manager/userManagement/buyerList'),
-        meta: { title: '采购商管理', icon: '', role: ['ADMIN'] }
+        meta: { title: '采购商管理', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'CUSTOMSERVICE'] }
       },
       {
         path: 'managerList',
@@ -129,14 +159,14 @@ export const asyncRouterMap = [
         name: 'providerDetail',
         hidden: true,
         component: () => import('@/views/manager/userManagement/providerDetail'),
-        meta: { title: '供应商详情', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
+        meta: { title: '供应商详情', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'IMPORTER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'buyerDetail',
         name: 'buyerDetail',
         hidden: true,
         component: () => import('@/views/manager/userManagement/buyerDetail'),
-        meta: { title: '采购商详情', icon: '', role: ['ADMIN'] }
+        meta: { title: '采购商详情', icon: '', role: ['ADMIN', 'CUSTOMSERVICE'] }
       },
       {
         path: 'managerEdit',
@@ -150,14 +180,21 @@ export const asyncRouterMap = [
         name: 'providerCreated',
         hidden: true,
         component: () => import('@/views/manager/userManagement/providerCreated'),
-        meta: { title: '新建供应商', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
+        meta: { title: '新建供应商', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'IMPORTER', 'CUSTOMSERVICE', 'FINANCE'] }
+      },
+      {
+        path: 'buyerCreated',
+        name: 'buyerCreated',
+        hidden: true,
+        component: () => import('@/views/manager/userManagement/buyerCreated'),
+        meta: { title: '新建采购商', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'IMPORTER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'providerCreatedBatch',
         name: 'providerCreatedBatch',
         hidden: true,
         component: () => import('@/views/manager/userManagement/providerCreatedBatch'),
-        meta: { title: '批量新建供应商', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
+        meta: { title: '批量新建供应商', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'IMPORTER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'managerCreated',
@@ -172,20 +209,56 @@ export const asyncRouterMap = [
     path: '',
     component: Layout,
     redirect: 'noredirect',
+    name: 'zbUser',
+    alwaysShow: true,
+    meta: { title: '找布用户管理', icon: 'manager', role: ['ADMIN', 'LOOKINGCLOTH', 'IMPORTER', 'CUSTOMSERVICE', 'FINANCE'] },
+    children: [
+      {
+        path: 'zbProviderList',
+        name: 'zbProviderList',
+        component: () => import('@/views/zbUser/providerList'),
+        meta: { title: '供应商管理', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'IMPORTER', 'CUSTOMSERVICE', 'FINANCE'] }
+      },
+      {
+        path: 'zbBuyerList',
+        name: 'zbBbuyerList',
+        component: () => import('@/views/zbUser/buyerList'),
+        meta: { title: '采购商管理', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'CUSTOMSERVICE'] }
+      },
+      {
+        path: 'zbProviderDetail',
+        name: 'zbProviderDetail',
+        hidden: true,
+        component: () => import('@/views/zbUser/providerDetail'),
+        meta: { title: '供应商详情', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'IMPORTER', 'CUSTOMSERVICE', 'FINANCE'] }
+      },
+      {
+        path: 'zbBuyerDetail',
+        name: 'zbBuyerDetail',
+        hidden: true,
+        component: () => import('@/views/zbUser/buyerDetail'),
+        meta: { title: '采购商详情', icon: '', role: ['ADMIN', 'LOOKINGCLOTH', 'CUSTOMSERVICE'] }
+      },
+    ]
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'noredirect',
     name: 'clothProduct',
-    meta: { title: '面料商品管理', icon: 'shop', role: ['ADMIN', 'PROVIDER', 'CUSTOMSERVICE', 'MANABUYER'] },
+    meta: { title: '面料商品管理', icon: 'shop', role: ['ADMIN', 'PROVIDER', 'CUSTOMSERVICE', 'MANABUYER', 'IMPORTER'] },
     children: [
       {
         path: 'providerClothManage',
         name: 'providerClothManage',
         component: () => import('@/views/manager/product/providerClothManage'),
-        meta: { title: '按供应商面料管理', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '按供应商面料管理', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'IMPORTER'] }
       },
       {
         path: 'clothList',
         name: 'clothList',
         component: () => import('@/views/manager/product/clothList'),
-        meta: { title: '面料列表', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '面料列表', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'IMPORTER'] }
       },
       {
         path: 'clothList',
@@ -210,14 +283,14 @@ export const asyncRouterMap = [
         name: 'providerClothList',
         hidden: true,
         component: () => import('@/views/manager/product/providerClothList'),
-        meta: { title: '供应商面料列表', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '供应商面料列表', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'IMPORTER'] }
       },
       {
         path: 'clothAdd',
         name: 'clothAdd',
         hidden: true,
         component: () => import('@/views/manager/product/clothEdit'),
-        meta: { title: '新增面料', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '新增面料', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'IMPORTER'] }
       },
       {
         path: 'clothAdd',
@@ -230,14 +303,14 @@ export const asyncRouterMap = [
         name: 'clothEdit',
         hidden: true,
         component: () => import('@/views/manager/product/clothEdit'),
-        meta: { title: '编辑面料', icon: '', role: ['ADMIN', 'PROVIDER', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '编辑面料', icon: '', role: ['ADMIN', 'PROVIDER', 'CUSTOMSERVICE', 'MANABUYER', 'IMPORTER'] }
       },
       {
         path: 'clothDetail',
         name: 'clothDetail',
         hidden: true,
         component: () => import('@/views/manager/product/clothDetail'),
-        meta: { title: '商品详情', icon: '', role: ['ADMIN', 'PROVIDER', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '商品详情', icon: '', role: ['ADMIN', 'PROVIDER', 'CUSTOMSERVICE', 'MANABUYER', 'IMPORTER'] }
       },
       // {
       //   path: 'clothEditNew',
@@ -254,13 +327,13 @@ export const asyncRouterMap = [
     redirect: 'noredirect',
     name: 'colorCard',
     alwaysShow: true,
-    meta: { title: '色卡标签管理', icon: 'shop', role: ['ADMIN'] },
+    meta: { title: '色卡标签管理', icon: 'shop', role: ['ADMIN', 'IMPORTER'] },
     children: [
       {
         path: 'colorCardList',
         name: 'colorCardList',
         component: () => import('@/views/manager/product/colorCardList'),
-        meta: { title: '标签列表', icon: '', role: ['ADMIN'] }
+        meta: { title: '标签列表', icon: '', role: ['ADMIN', 'IMPORTER'] }
       }
     ]
   },
@@ -270,13 +343,13 @@ export const asyncRouterMap = [
     redirect: 'noredirect',
     name: 'material',
     alwaysShow: true,
-    meta: { title: '面料库存管理', icon: 'stock', role: ['ADMIN', 'PROVIDER', 'CUSTOMSERVICE', 'MANABUYER'] },
+    meta: { title: '面料库存管理', icon: 'stock', role: ['ADMIN', 'PROVIDER', 'MANABUYER', 'IMPORTER'] },
     children: [
       {
         path: 'materialList',
         name: 'materialList',
         component: () => import('@/views/manager/materialStock/materialList'),
-        meta: { title: '面料库存列表', icon: '', role: ['ADMIN', 'PROVIDER', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '面料库存列表', icon: '', role: ['ADMIN', 'PROVIDER', 'MANABUYER', 'IMPORTER'] }
       }
     ]
   },
@@ -285,27 +358,27 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: 'noredirect',
     name: 'order',
-    meta: { title: '现货订单管理', icon: 'order', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] },
+    meta: { title: '现货订单管理', icon: 'order', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'FINANCE'] },
     children: [
       {
         path: 'orderList',
         name: 'orderList',
         component: () => import('@/views/manager/order/orderList'),
-        meta: { title: '订单列表', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '订单列表', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'FINANCE'] }
       },
       {
         path: 'orderDetail',
         name: 'orderDetail',
         hidden: true,
         component: () => import('@/views/manager/order/orderDetail'),
-        meta: { title: '订单详情', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '订单详情', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'FINANCE'] }
       },
       {
         path: 'orderContract',
         name: 'orderContract',
         hidden: true,
         component: () => import('@/views/contract/orderContract'),
-        meta: { title: '订单合同', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '订单合同', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'FINANCE'] }
       },
       {
         path: 'oldOrder',
@@ -320,27 +393,27 @@ export const asyncRouterMap = [
     component: Layout,
     redirct: 'noredirect',
     name: 'customization',
-    meta: { title: '定制订单管理', icon: 'order', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] },
+    meta: { title: '定制订单管理', icon: 'order', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'FINANCE'] },
     children: [
       {
         path: 'customizationList',
         name: 'customizationList',
         component: () => import('@/views/manager/customization/customizationList'),
-        meta: { title: '定制订单列表', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '定制订单列表', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'FINANCE'] }
       },
       {
         path: 'customizationDetail',
         name: 'customizationDetail',
         hidden: true,
         component: () => import('@/views/manager/customization/customizationDetail'),
-        meta: { title: '新品定制订单详情', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '新品定制订单详情', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'FINANCE'] }
       },
       {
         path: 'demandCustomizationDetail',
         name: 'demandCustomizationDetail',
         hidden: true,
         component: () => import('@/views/manager/customization/demandCustomizationDetail'),
-        meta: { title: '需求定制订单详情', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER'] }
+        meta: { title: '需求定制订单详情', icon: '', role: ['ADMIN', 'CUSTOMSERVICE', 'MANABUYER', 'FINANCE'] }
       }
     ]
   },
@@ -349,46 +422,46 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: 'noredirect',
     name: 'purchase',
-    meta: { title: '采购单管理', icon: 'order', role: ['ADMIN', 'PROVIDER', 'MANABUYER'] },
+    meta: { title: '采购单管理', icon: 'order', role: ['ADMIN', 'PROVIDER', 'MANABUYER', 'CUSTOMSERVICE', 'FINANCE'] },
     children: [
       {
         path: 'turnToPurchase',
         name: 'turnToPurchase',
         component: () => import('@/views/manager/purchase/turnToPurchase'),
-        meta: { title: '待转采购单', icon: '', role: ['ADMIN', 'MANABUYER'] }
+        meta: { title: '待转采购单', icon: '', role: ['ADMIN', 'MANABUYER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'stockPurchase',
         name: 'stockPurchase',
         component: () => import('@/views/manager/purchase/stockPurchase'),
-        meta: { title: '现货采购单', icon: '', role: ['ADMIN', 'PROVIDER', 'MANABUYER'] }
+        meta: { title: '现货采购单', icon: '', role: ['ADMIN', 'PROVIDER', 'MANABUYER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'customizationPurchase',
         name: 'customizationPurchase',
         component: () => import('@/views/manager/purchase/customizationPurchase'),
-        meta: { title: '新品定制采购单', icon: '', role: ['ADMIN', 'MANABUYER'] }
+        meta: { title: '新品定制采购单', icon: '', role: ['ADMIN', 'MANABUYER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'customizationPurchaseDetail',
         name: 'customizationPurchaseDetail',
         hidden: true,
         component: () => import('@/views/manager/purchase/customizationPurchaseDetail'),
-        meta: { title: '定制采购单详情', icon: '', role: ['ADMIN', 'MANABUYER'] }
+        meta: { title: '定制采购单详情', icon: '', role: ['ADMIN', 'MANABUYER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'purchaseContract',
         name: 'purchaseContract',
         hidden: true,
         component: () => import('@/views/contract/purchaseContract'),
-        meta: { title: '采购合同', icon: '', role: ['ADMIN', 'PROVIDER', 'MANABUYER'] }
+        meta: { title: '采购合同', icon: '', role: ['ADMIN', 'PROVIDER', 'MANABUYER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'purchaseDetail',
         name: 'purchaseDetail',
         hidden: true,
         component: () => import('@/views/manager/purchase/purchaseDetail'),
-        meta: { title: '采购详情', icon: '', role: ['ADMIN', 'PROVIDER', 'MANABUYER'] }
+        meta: { title: '采购详情', icon: '', role: ['ADMIN', 'PROVIDER', 'MANABUYER', 'CUSTOMSERVICE', 'FINANCE'] }
       },
       {
         path: 'customMadeList', // 供应商的定制采购单
@@ -411,46 +484,46 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: 'noredirect',
     name: 'financial',
-    meta: { title: '财务管理', icon: 'finance', role: ['ADMIN'] },
+    meta: { title: '财务管理', icon: 'finance', role: ['ADMIN', 'FINANCE'] },
     children: [
       {
         path: 'bankTransferList',
         name: 'bankTransferList',
         component: () => import('@/views/manager/financial/bankTransferList'),
-        meta: { title: '转账确认列表', icon: '', role: ['ADMIN'] }
+        meta: { title: '转账确认列表', icon: '', role: ['ADMIN', 'FINANCE'] }
       },
       {
         path: 'bankTransferDetail',
         name: 'bankTransferDetail',
         hidden: true,
         component: () => import('@/views/manager/financial/bankTransferDetail'),
-        meta: { title: '转账详情', icon: '', role: ['ADMIN'] }
+        meta: { title: '转账详情', icon: '', role: ['ADMIN', 'FINANCE'] }
       },
       {
         path: 'settleAccounts',
         name: 'settleAccounts',
         component: () => import('@/views/manager/financial/settleAccounts'),
-        meta: { title: '采购商结算', icon: '', role: ['BUYER', 'ADMIN'] } // 采购商结算
+        meta: { title: '采购商结算', icon: '', role: ['BUYER', 'ADMIN', 'FINANCE'] } // 采购商结算
       },
       {
         path: 'settleAccountDetail',
         name: 'settleAccountDetail',
         hidden: true,
         component: () => import('@/views/manager/financial/settleAccountDetail'),
-        meta: { title: '结算详情', icon: '', role: ['BUYER', 'ADMIN'] }  // 采购商结算详情
+        meta: { title: '结算详情', icon: '', role: ['BUYER', 'ADMIN', 'FINANCE'] }  // 采购商结算详情
       },
       {
         path: 'supplierSettleAccountList',
         name: 'supplierSettleAccountList',
         component: () => import('@/views/manager/financial/supplierSettleAccountList'),
-        meta: { title: '供应商结算', icon: '', role: ['PROVIDER', 'ADMIN'] } // 供应商结算
+        meta: { title: '供应商结算', icon: '', role: ['PROVIDER', 'ADMIN', 'FINANCE'] } // 供应商结算
       },
       {
         path: 'supplierSettleAccountDetail',
         name: 'supplierSettleAccountDetail',
         hidden: true,
         component: () => import('@/views/manager/financial/supplierSettleAccountDetail'),
-        meta: { title: '结算详情', icon: '', role: ['PROVIDER', 'ADMIN'] } // 供应商结算详情
+        meta: { title: '结算详情', icon: '', role: ['PROVIDER', 'ADMIN', 'FINANCE'] } // 供应商结算详情
       }
     ]
   },
@@ -527,6 +600,63 @@ export const asyncRouterMap = [
   //     }
   //   ]
   // },
+  {
+    path: '/statistics',
+    component: Layout,
+    redirct: 'noredirect',
+    name: 'notice',
+    meta: { title: '统计管理', icon: 'finance', role: ['ADMIN'] },
+    children: [
+      {
+        path: 'channelList',
+        name: 'channelList',
+        component: () => import('@/views/statistics/channelList'),
+        meta: { title: '渠道推广效果统计', icon: '', role: ['ADMIN'] }
+      },
+      {
+        path: 'userList',
+        name: 'userList',
+        component: () => import('@/views/statistics/userList'),
+        meta: { title: '用户统计', icon: '', role: ['ADMIN'] }
+      },
+      {
+        path: 'proList',
+        name: 'proList',
+        component: () => import('@/views/statistics/proList'),
+        meta: { title: '产品使用效果统计', icon: '', role: ['ADMIN'] }
+      },
+      {
+        path: 'msgList',
+        name: 'msgList',
+        component: () => import('@/views/statistics/msgList'),
+        meta: { title: '短信发送量统计', icon: '', role: ['ADMIN'] }
+      },
+      {
+        path: 'orderList',
+        name: 'orderList',
+        component: () => import('@/views/statistics/orderList'),
+        meta: { title: '新采购商订单（自然日）', icon: '', role: ['ADMIN'] }
+      },
+      {
+        path: 'otherOrderList',
+        name: 'otherOrderList',
+        component: () => import('@/views/statistics/otherOrderList'),
+        meta: { title: '新采购商订单（12点到次日12点）', icon: '', role: ['ADMIN'] }
+      },
+      {
+        path: 'newProList',
+        name: 'newProList',
+        component: () => import('@/views/statistics/newProList'),
+        meta: { title: '供应商新增', icon: '', role: ['ADMIN'] }
+      },
+      {
+        path: 'orderStatList',
+        name: 'orderStatList',
+        component: () => import('@/views/statistics/orderStatList'),
+        meta: { title: '订单', icon: '', role: ['ADMIN'] }
+      }
+    ]
+  },
   {
     path: '/user',
     component: Layout,

@@ -65,61 +65,61 @@
       };
     },
     created() {
-      let query = cloneObj(this.$route.query);
-      let inputs = this.inputGroup;                        //根据路由参数回填搜索框
-      for (let i = 0; i < inputs.length; i++) {
-        for (let j = 0; j < inputs[i].length; j++) {
-          if (query[inputs[i][j].name] != null) {
-            inputs[i][j].value = query[inputs[i][j].name];
-          }
-        }
-      }
-      this.queryAction();
+		let query = cloneObj(this.$route.query);
+		let inputs = this.inputGroup;                        //根据路由参数回填搜索框
+		for (let i = 0; i < inputs.length; i++) {
+			for (let j = 0; j < inputs[i].length; j++) {
+			if (query[inputs[i][j].name] != null) {
+				inputs[i][j].value = query[inputs[i][j].name];
+			}
+			}
+		}
+		this.queryAction();
     },
     methods: {
-      queryAction(params) {
-        let query = cloneObj(this.$route.query);
-        let search = this.searchKey;
-        for (let key in search) {                        //把上次搜索的内容加入参数
-          if (search[key].length != 0) {
-            query[key] = search[key];
-          } else {
-            delete query[key];
-          }
-        }
-        params = params || {};
-        for (let key in params) {                       //获得本次操作定义的参数信息
-          query[key] = params[key];
-        }
-        query.page = parseInt(query.page) || 0;
-        query.pageSize = parseInt(query.pageSize) || this.pageSize;
-        this.page = query.page;
-        this.$router.push({ query: query });
-        this.getData(query);
-      },
-      getData(params) {
-        getmgrUserList(params).then(res => {
-          this.list = res.formatList;
-          this.totalSize = setTotalSize(res.totalSize, params.page, 'managerList');
-        });
-      },
-      handleCurrentChange(val) {
-        if (this.page === val - 1) return;
-        this.queryAction({ page: val - 1 });
-      },
-      showDetail(oid) {
-        this.$router.push({ name: 'managerEdit', query: { id: oid } });
-      },
-      handleSearch() {
-        let queryKey = this.$refs.queryData.queryData;
-        if (queryKey.createTime) {
-          queryKey.startTime = queryKey.createTime[0] || '';
-          queryKey.endTime = queryKey.createTime[1] || '';
-        }
-        delete queryKey.createTime;
-        this.searchKey = queryKey;
-        this.queryAction({ page: 0 });
-      }
+      	queryAction(params) {
+			let query = cloneObj(this.$route.query);
+			let search = this.searchKey;
+			for (let key in search) {                        //把上次搜索的内容加入参数
+				if (search[key].length != 0) {
+					query[key] = search[key];
+				} else {
+					delete query[key];
+				}
+			}
+			params = params || {};
+			for (let key in params) {                       //获得本次操作定义的参数信息
+				query[key] = params[key];
+			}
+			query.page = parseInt(query.page) || 0;
+			query.pageSize = parseInt(query.pageSize) || this.pageSize;
+			this.page = query.page;
+			this.$router.push({ query: query });
+			this.getData(query);
+      	},
+		getData(params) {
+			getmgrUserList(params).then(res => {
+				this.list = res.formatList;
+				this.totalSize = setTotalSize(res.totalSize, params.page, 'managerList');
+			});
+		},
+		handleCurrentChange(val) {
+			if (this.page === val - 1) return;
+			this.queryAction({ page: val - 1 });
+		},
+		showDetail(oid) {
+			this.$router.push({ name: 'managerEdit', query: { id: oid } });
+		},
+		handleSearch() {
+			let queryKey = this.$refs.queryData.queryData;
+			if (queryKey.createTime) {
+			queryKey.startTime = queryKey.createTime[0] || '';
+			queryKey.endTime = queryKey.createTime[1] || '';
+			}
+			delete queryKey.createTime;
+			this.searchKey = queryKey;
+			this.queryAction({ page: 0 });
+		}
     },
     components: {
       EbTable,

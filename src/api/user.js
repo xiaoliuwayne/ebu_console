@@ -42,6 +42,14 @@ export function getInfo(userId) {
   });
 }
 
+export function getInfo2(params) {
+	return request({
+	  url: '/auth.do?cmd=getUserDetail',
+	  method: 'get',
+	  params
+	});
+  }
+
 export function changeUserMgr(params) {
   return request({
     url: '/auth.do?cmd=userMgr',
@@ -149,6 +157,7 @@ export function getProviderList(params) {
     
     let list = cloneObj(res.list);
     let providerList = [];
+	let marketRange = global_.marketRange
 
     for (let i = 0; i < list.length; i++) {
       /* let majorListNames = []; */
@@ -160,22 +169,23 @@ export function getProviderList(params) {
         } */
 
         for(let value of list[i].busiKeywords){
-          busiKeywords.push(value.keyword)
+          	busiKeywords.push(value.keyword)
         }
 
         providerList[i] = {
-          providerId: list[i].userId,
-          userName: list[i].userName,
-          registerPhone: list[i].regTel,
-          providerName: list[i].name,
-          cneeName: list[i].linkman,
-          cneePhone: list[i].tel,
-          address: list[i].address,
-          /* majorName: majorListNames.join(','), */
-          busiKeywords:busiKeywords.join('、'),
-          incomeLevel: byTypeGetObj(list[i].incomeLevel, settlementLevel).n,
-          createTime: parseTime(list[i].registerTime),
-          spuNum: list[i].spuNum
+			providerId      : list[i].userId,
+			userName        : list[i].userName,
+			registerPhone	: list[i].regTel,
+			providerName 	: list[i].name,
+			cneeName		: list[i].linkman,
+			cneePhone		: list[i].tel,
+			address		 	: list[i].address,
+			marketId		: byTypeGetObj(list[i].marketId, marketRange).n,
+			/* majorName: majorListNames.join(','), */
+			busiKeywords	: busiKeywords.join('、'),
+			incomeLevel	  	: byTypeGetObj(list[i].incomeLevel, settlementLevel).n,
+			createTime	  	: parseTime(list[i].registerTime),
+			spuNum		  	: list[i].spuNum
         };
       } catch (err) {
       }
