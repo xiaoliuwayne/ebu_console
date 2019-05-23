@@ -238,7 +238,7 @@
                                     <el-button type="text" size="mini" @click="handleConfirm('note')">{{noteIsChange ? '确认' : '添加备注'}}</el-button>
                                 </div>
                                 <ul style="margin:10px 0;">
-                                    <li v-for="(item,index) in detail.note" :key="index">
+                                    <li v-for="(item,index) in note" :key="index">
                                         {{parseTimeClone(item.createTime)}} / 内容：{{item.content}}
                                     </li>
                                 </ul>
@@ -498,9 +498,9 @@
                                 </el-table>
                             </div>
                             <div style="margin:20px 0;">
-                                跑腿金额：￥{{detail.payInfo.ptAmount}}    ；
-                                运费金额：￥{{detail.payInfo.freight}}    ；
-                                商品金额：￥{{detail.payInfo.productAmount}}   ；
+                                跑腿金额：￥{{payInfo.ptAmount}}    ；
+                                运费金额：￥{{payInfo.freight}}    ；
+                                商品金额：￥{{payInfo.productAmount}}   ；
                                 应付金额：￥{{deliverPayAmount}}   ；
                             </div>
                             </div>
@@ -509,7 +509,7 @@
                      <tr>
                         <td>物流单号</td>
                         <td>
-                            <p v-if="trackingNum == ''"><span>暂无快递信息</span></p>
+                            <p v-if="trackingNum == ''"><span>{{deliCom}}</span> | <span>暂无快递信息</span></p>
                             <p v-else><span>{{deliCom}}</span> | <span>{{trackingNum}}</span></p>
                             <div v-if="status.t != '1'">
                                 <el-button type="primary" size="mini" @click="logisticsDialog = true">更改快递信息</el-button>
@@ -531,12 +531,16 @@
                             <div>
                                 <span>回样供应商{{index + 1}}：{{item.provider.name}}；</span>
                                 <span>回复时间：{{item.createTime}}</span>
-                                <el-button type="text" size="mini" v-if="item.opUserId != item.userId" @click="$router.push({ name: 'updateReceipt',query:{inquiryId:item.inquiryId}})">替回修改</el-button>
+                                <el-button type="text" size="mini" v-if="item.opUserId != item.userId" @click="$router.push({ name: 'updateReceipt',query:{
+                                    inquiryId   : item.inquiryId,
+                                    providerId  : item.provider.userId,
+                                    receiptId   : item.receiptId
+                                }})">替回修改</el-button>
                             </div>
                             <div>
-                                <el-tag v-show="item.unRead == '0'">采购商已查看</el-tag>
-                                <el-tag v-show="item.status == '1' || item.status == '3'" type="success">合适</el-tag>
-                                <el-tag v-show="item.status == '3'" type="warning">跑腿</el-tag>
+                                <el-tag v-show="item.unRead == 0">采购商已查看</el-tag>
+                                <el-tag v-show="item.status == 1 || item.status == 3" type="success">合适</el-tag>
+                                <el-tag v-show="item.status == 3" type="warning">跑腿</el-tag>
                             </div>
                         </div>
                     </div>
@@ -802,10 +806,8 @@ export default {
             noteIsChange            :false,
             
             noteContent:'',
-            detail:{
-                note:[],
-                payInfo:{}
-            },
+            note:[],
+            payInfo:{},
             priceUnit:[
                 {t:0,n:'',s:''},
                 {t:1,n:'/米',s:''},
@@ -892,7 +894,8 @@ export default {
             return providerList
         },
         payInfoItems:function(){
-            if(this.detail.payInfo.hasOwnProperty('items')){
+
+            if(this.payInfo.hasOwnProperty('items')){
 
                 let receipt = this.receiptList.find(res => res.receiptId == res.receiptId)
                 let name = ''
@@ -900,10 +903,11 @@ export default {
                     name = receipt.provider.name
                 }
 
-                return this.detail.payInfo.items.map(res => {
+                return this.payInfo.items.map(res => {
+
                     return {
                         name        : name,
-                        payType     : this.priceTypes[res.payType].label,
+                        payType     : this.priceTypes[res.payType - 1].label,
                         buyNumber   : res.buyNumber,
                         price       : `${res.price}${this.priceUnit[res.unit].n}`,
                         buyColorCode: res.buyColorCode,
@@ -1327,6 +1331,8 @@ export default {
             //初始化需求单基本数据
             await inquiryDetail({ inquiryId: this.inquiryId }).then(res => {
 
+                console.log(res)
+
                 this.inquiryId       = res.inquiryId
                 this.inquiryType     = res.inquiryType == 1 ? '普通找版' : '精准找版'
                 this.createTime      = parseTime(res.createTime,"{y}-{m}-{d} {h}:{i}")
@@ -1340,7 +1346,8 @@ export default {
                 this.imageList       = res.imageList
                 this.marketId        = res.marketId < 99 ? global_.marketRange[res.marketId].n : '其他'
                 this.status          = cloneObj(byTypeGetObj(res.status,global_.inquiryStatusD))
-                this.detail          = res.detail
+                this.note            = res.detail.note || []
+                this.payInfo         = res.detail.payInfo || {}
                 this.type            = res.type
                 this.acceptCustomize = res.acceptCustomize
                 this.deputeCollect   = res.deputeCollect
@@ -1406,7 +1413,7 @@ export default {
 
                 for(let item of res.list){
 
-                    console.log(item)
+                    /* console.log(item) */
                     
                     receiptList.push(
                         {
@@ -1578,7 +1585,7 @@ export default {
 
                 }
 
-                this.detail.note.push ({
+                this.note.push ({
                     
                     createTime  : new Date(),
                     content     : this.noteContent
@@ -1586,7 +1593,10 @@ export default {
                 })
 
                 params = {
-                    detail: this.detail
+                    detail: {
+                        note    : this.note,
+                        payInfo : this.payInfo
+                    }
                 }
 
             //品类备注参数格式化

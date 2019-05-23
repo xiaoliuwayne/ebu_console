@@ -87,12 +87,14 @@ export const asyncRouterMap = [
       {
         path: 'inquiryReceipt',
         name: 'inquiryReceipt',
+        hidden: true,
         component: () => import('@/views/manager/inquiry/inquiryReceipt'),
         meta: { title: '新增需求回单', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
       },
       {
         path: 'updateReceipt',
         name: 'updateReceipt',
+        hidden: true,
         component: () => import('@/views/manager/inquiry/updateReceipt'),
         meta: { title: '更新需求回单', icon: '' }
         // meta: { title: '更新需求回单', icon: '', role: ['ADMIN', 'LOOKINGCLOTH'] }
